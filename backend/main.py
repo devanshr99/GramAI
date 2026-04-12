@@ -58,7 +58,7 @@ async def lifespan(app: FastAPI):
     else:
         logger.warning(
             f"[WARN] LLM ({llm_service.model}) not available. "
-            "Start Ollama and pull the model. System will use knowledge base only."
+            "Set ANTHROPIC_API_KEY in .env. System will use knowledge base only."
         )
 
     # Initialize STT
