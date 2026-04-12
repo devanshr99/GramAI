@@ -20,7 +20,7 @@ function Message({ msg, t, lang }) {
   const handleSpeak = async (e) => {
     const btn = e.currentTarget;
     const clean = msg.text.replace(/<[^>]*>/g, '').replace(/\*\*/g, '').replace(/#{1,3} /g, '')
-      .replace(/[⚠️✅📖🌾🏥📚🏛️💰🤒🎓🌿🌱🌐]/gu, '').trim();
+      .replace(/(⚠️|✅|📖|🌾|🏥|📚|🏛️|💰|🤒|🎓|🌿|🌱|🌐)/gu, '').trim();
     if (!clean) return;
     btn.innerHTML = '⏳';
     try {
