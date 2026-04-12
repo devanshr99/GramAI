@@ -1,0 +1,48 @@
+# ================================================
+# GramAI - Docker Compose
+# Offline AI Assistant for Rural India
+# ================================================
+# Usage:
+#   docker-compose up -d
+#
+# Prerequisites:
+#   - Install Ollama separately: https://ollama.ai
+#   - Pull model: ollama pull mistral
+# ================================================
+
+version: '3.8'
+
+services:
+  # ---- GramAI Backend + Frontend ----
+  gramai:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    container_name: gramai-server
+    ports:
+      - "8000:8000"
+    environment:
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - OLLAMA_MODEL=mistral
+      - HOST=0.0.0.0
+      - PORT=8000
+    volumes:
+      - gramai-data:/app/backend/chroma_db
+      - gramai-audio:/app/backend/audio_cache
+      - gramai-models:/app/backend/models
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  gramai-data:
+    driver: local
+  gramai-audio:
+    driver: local
+  gramai-models:
+    driver: local

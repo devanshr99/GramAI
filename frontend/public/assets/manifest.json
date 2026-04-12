@@ -1,0 +1,91 @@
+{
+  "name": "GramAI - ग्रामीण AI सहायक",
+  "short_name": "GramAI",
+  "description": "ऑफ़लाइन AI सहायक - Offline AI Assistant for Rural India. Agriculture, Health, Education & Government Schemes.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0a1628",
+  "theme_color": "#2d8a4e",
+  "orientation": "portrait-primary",
+  "lang": "hi",
+  "dir": "ltr",
+  "categories": ["education", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/assets/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/assets/screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "GramAI Home Screen"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "कृषि सहायता",
+      "short_name": "कृषि",
+      "description": "Agriculture Help",
+      "url": "/?category=agriculture",
+      "icons": [{"src": "/assets/icon-96.png", "sizes": "96x96"}]
+    },
+    {
+      "name": "स्वास्थ्य सहायता",
+      "short_name": "स्वास्थ्य",
+      "description": "Health Help",
+      "url": "/?category=health",
+      "icons": [{"src": "/assets/icon-96.png", "sizes": "96x96"}]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

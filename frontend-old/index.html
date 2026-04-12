@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="ग्रामAI - ग्रामीण भारत के लिए ऑफ़लाइन AI सहायक। कृषि, स्वास्थ्य, शिक्षा और सरकारी योजनाओं की जानकारी।">
+    <meta name="theme-color" content="#0a1628">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>ग्रामAI - ऑफ़लाइन AI सहायक</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="manifest" href="/assets/manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/assets/icon-192.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/assets/icon-512.png">
+    <meta name="apple-mobile-web-app-title" content="ग्रामAI">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="msapplication-TileImage" content="/assets/icon-144.png">
+    <meta name="msapplication-TileColor" content="#0a1628">
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p class="loading-text" data-i18n="loading">ग्रामAI लोड हो रहा है...</p>
+    </div>
+
+    <!-- App Container -->
+    <div class="app-container" id="appContainer">
+
+        <!-- Header -->
+        <header class="app-header" id="appHeader">
+            <div class="header-content">
+                <div class="header-logo" id="headerLogo">🌾</div>
+                <div class="header-text">
+                    <h1>ग्रामAI</h1>
+                    <p data-i18n="subtitle">ऑफ़लाइन AI सहायक</p>
+                </div>
+                <!-- Language Selector -->
+                <div class="lang-selector" id="langSelector">
+                    <button class="lang-btn" id="langBtn" aria-label="Change Language" title="भाषा बदलें">
+                        <span class="lang-flag" id="langFlag">🇮🇳</span>
+                        <span class="lang-code" id="langCode">हिंदी</span>
+                        <span class="lang-arrow">▾</span>
+                    </button>
+                    <div class="lang-dropdown" id="langDropdown">
+                        <div class="lang-option active" data-lang="hi">
+                            <span class="lang-option-name">हिंदी</span>
+                            <span class="lang-option-en">Hindi</span>
+                        </div>
+                        <div class="lang-option" data-lang="en">
+                            <span class="lang-option-name">English</span>
+                            <span class="lang-option-en">English</span>
+                        </div>
+                        <div class="lang-option" data-lang="ta">
+                            <span class="lang-option-name">தமிழ்</span>
+                            <span class="lang-option-en">Tamil</span>
+                        </div>
+                        <div class="lang-option" data-lang="te">
+                            <span class="lang-option-name">తెలుగు</span>
+                            <span class="lang-option-en">Telugu</span>
+                        </div>
+                        <div class="lang-option" data-lang="bn">
+                            <span class="lang-option-name">বাংলা</span>
+                            <span class="lang-option-en">Bengali</span>
+                        </div>
+                        <div class="lang-option" data-lang="mr">
+                            <span class="lang-option-name">मराठी</span>
+                            <span class="lang-option-en">Marathi</span>
+                        </div>
+                        <div class="lang-option" data-lang="gu">
+                            <span class="lang-option-name">ગુજરાતી</span>
+                            <span class="lang-option-en">Gujarati</span>
+                        </div>
+                        <div class="lang-option" data-lang="kn">
+                            <span class="lang-option-name">ಕನ್ನಡ</span>
+                            <span class="lang-option-en">Kannada</span>
+                        </div>
+                        <div class="lang-option" data-lang="ml">
+                            <span class="lang-option-name">മലയാളം</span>
+                            <span class="lang-option-en">Malayalam</span>
+                        </div>
+                        <div class="lang-option" data-lang="pa">
+                            <span class="lang-option-name">ਪੰਜਾਬੀ</span>
+                            <span class="lang-option-en">Punjabi</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-status" id="connectionStatus">
+                    <span class="status-dot" id="statusDot"></span>
+                    <span id="statusText">ऑफ़लाइन</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Category Selection -->
+        <section class="category-section" id="categorySection">
+            <h2 data-i18n="selectTopic">विषय चुनें</h2>
+            <div class="category-grid" id="categoryGrid">
+                <div class="category-card" data-category="कृषि" id="catAgriculture">
+                    <span class="category-icon">🌱</span>
+                    <span class="category-name" data-i18n="catAgri">कृषि</span>
+                    <span class="category-name-en">Agriculture</span>
+                </div>
+                <div class="category-card" data-category="स्वास्थ्य" id="catHealth">
+                    <span class="category-icon">🏥</span>
+                    <span class="category-name" data-i18n="catHealth">स्वास्थ्य</span>
+                    <span class="category-name-en">Health</span>
+                </div>
+                <div class="category-card" data-category="शिक्षा" id="catEducation">
+                    <span class="category-icon">📚</span>
+                    <span class="category-name" data-i18n="catEdu">शिक्षा</span>
+                    <span class="category-name-en">Education</span>
+                </div>
+                <div class="category-card" data-category="सरकारी योजना" id="catSchemes">
+                    <span class="category-icon">🏛️</span>
+                    <span class="category-name" data-i18n="catSchemes">सरकारी योजना</span>
+                    <span class="category-name-en">Govt. Schemes</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chat Area -->
+        <main class="chat-area" id="chatArea">
+            <div class="chat-welcome" id="chatWelcome">
+                <span class="welcome-icon">🙏</span>
+                <h3 data-i18n="greeting">नमस्ते!</h3>
+                <p data-i18n="welcomeMsg">मैं ग्रामAI हूँ। कृषि, स्वास्थ्य, शिक्षा या सरकारी योजनाओं के बारे में पूछें।</p>
+                <p style="margin-top: 8px; font-size: 0.78rem;" data-i18n="welcomeHint">बोलकर या लिखकर सवाल पूछ सकते हैं।</p>
+            </div>
+        </main>
+
+        <!-- Input Area -->
+        <footer class="input-area" id="inputArea">
+            <div class="input-wrapper" id="inputWrapper">
+                <textarea
+                    class="chat-input"
+                    id="chatInput"
+                    placeholder="यहाँ सवाल लिखें..."
+                    rows="1"
+                    aria-label="अपना सवाल लिखें"
+                    data-i18n-placeholder="inputPlaceholder"
+                ></textarea>
+                <div class="input-actions">
+                    <button class="btn-icon btn-mic" id="btnMic" aria-label="बोलकर पूछें" title="बोलकर पूछें">
+                        🎤
+                    </button>
+                    <button class="btn-icon btn-send" id="btnSend" aria-label="भेजें" title="भेजें" disabled>
+                        ➤
+                    </button>
+                </div>
+            </div>
+            <div class="quick-actions" id="quickActions">
+                <button class="quick-btn" data-query="गेहूं की खेती कैसे करें?">🌾 गेहूं की खेती</button>
+                <button class="quick-btn" data-query="PM-KISAN योजना क्या है?">💰 PM-KISAN</button>
+                <button class="quick-btn" data-query="बुखार का इलाज">🤒 बुखार का इलाज</button>
+                <button class="quick-btn" data-query="छात्रवृत्ति कैसे मिलेगी?">🎓 छात्रवृत्ति</button>
+                <button class="quick-btn" data-query="जैविक खेती कैसे करें?">🌿 जैविक खेती</button>
+                <button class="quick-btn" data-query="आयुष्मान भारत कार्ड कैसे बनवाएं?">🏥 आयुष्मान कार्ड</button>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- PWA Install Banner -->
+    <div class="install-banner" id="installBanner">
+        <div class="install-banner-content">
+            <img src="/assets/icon-96.png" alt="GramAI" class="install-icon">
+            <div class="install-text">
+                <strong data-i18n="installTitle">ग्रामAI इंस्टॉल करें</strong>
+                <p data-i18n="installDesc">ऐप को अपने फ़ोन में इंस्टॉल करें</p>
+            </div>
+            <button class="install-btn" id="installBtn" data-i18n="installBtnText">इंस्टॉल</button>
+            <button class="install-close" id="installClose">✕</button>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script src="/js/app.js"></script>
+    <script>
+      // Register Service Worker for PWA
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((reg) => console.log('[PWA] Service Worker registered:', reg.scope))
+            .catch((err) => console.warn('[PWA] SW registration failed:', err));
+        });
+      }
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "gramai-mobile",
+  "version": "1.0.0",
+  "description": "GramAI Mobile App - Offline AI Assistant for Rural India",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo 'No build step needed - serving from backend'",
+    "cap:init": "npx cap init GramAI com.gramai.app --web-dir ../frontend",
+    "cap:add:android": "npx cap add android",
+    "cap:sync": "npx cap sync",
+    "cap:open:android": "npx cap open android",
+    "cap:build:android": "npx cap sync android && cd android && gradlew assembleDebug",
+    "cap:run:android": "npx cap run android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/splash-screen": "^6.0.0"
+  }
+}
