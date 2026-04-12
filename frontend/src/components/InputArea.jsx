@@ -19,7 +19,7 @@ function getSpeechRecognition() {
   return new SR();
 }
 
-export default function InputArea({ t, onSend, processing, showToast, lang, mode }) {
+export default function InputArea({ t, onSend, processing, showToast, lang }) {
   const [text, setText] = useState('');
   const [listening, setListening] = useState(false);
   const [interimText, setInterimText] = useState('');
@@ -128,6 +128,7 @@ export default function InputArea({ t, onSend, processing, showToast, lang, mode
     try {
       recognition.start();
     } catch (err) {
+      console.error(err);
       showToast(`⚠️ ${t('micUnavailable')}`);
       setListening(false);
     }

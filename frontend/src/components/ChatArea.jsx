@@ -7,7 +7,7 @@ function formatText(text) {
   let html = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   html = html.replace(/^### (.+)$/gm, '<strong style="font-size:0.95rem;display:block;margin-top:8px;">$1</strong>');
   html = html.replace(/^## (.+)$/gm, '<strong style="font-size:1rem;display:block;margin-top:10px;">$1</strong>');
-  html = html.replace(/^[•\-\*] (.+)$/gm, '<span style="display:block;padding-left:12px;">• $1</span>');
+  html = html.replace(/^[•\-*] (.+)$/gm, '<span style="display:block;padding-left:12px;">• $1</span>');
   html = html.replace(/^(\d+)\. (.+)$/gm, '<span style="display:block;padding-left:12px;">$1. $2</span>');
   html = html.replace(/\n/g, '<br/>');
   return html;
@@ -20,7 +20,7 @@ function Message({ msg, t, lang }) {
   const handleSpeak = async (e) => {
     const btn = e.currentTarget;
     const clean = msg.text.replace(/<[^>]*>/g, '').replace(/\*\*/g, '').replace(/#{1,3} /g, '')
-      .replace(/[⚠️✅📖🌾🏥📚🏛️💰🤒🎓🌿🌱🌐]/g, '').trim();
+      .replace(/[⚠️✅📖🌾🏥📚🏛️💰🤒🎓🌿🌱🌐]/gu, '').trim();
     if (!clean) return;
     btn.innerHTML = '⏳';
     try {

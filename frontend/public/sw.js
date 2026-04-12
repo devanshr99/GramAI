@@ -68,6 +68,7 @@ async function cacheFirstStrategy(request) {
     }
     return response;
   } catch (error) {
+    console.error(error);
     // Return offline fallback for navigation requests
     if (request.mode === 'navigate') {
       return caches.match('/index.html');
@@ -86,6 +87,7 @@ async function networkFirstStrategy(request) {
     }
     return response;
   } catch (error) {
+    console.error(error);
     // Try cache for GET requests
     if (request.method === 'GET') {
       const cached = await caches.match(request);

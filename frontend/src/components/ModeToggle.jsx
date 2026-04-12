@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Wifi, WifiOff, Sparkles, Database } from 'lucide-react';
 
-export default function ModeToggle({ mode, onSwitch, t, onlineAvailable }) {
+export default function ModeToggle({ mode, onSwitch, t }) {
   return (
     <div className="mode-toggle-bar">
       <motion.button

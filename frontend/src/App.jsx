@@ -29,7 +29,7 @@ export default function App() {
 
   // Get current messages based on mode
   const messages = mode === 'online' ? onlineMessages : offlineMessages;
-  const setMessages = mode === 'online' ? setOnlineMessages : setOfflineMessages;
+  // setMessages handled inline 
 
   const showToast = useCallback((msg) => {
     setToast(msg);

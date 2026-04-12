@@ -1,6 +1,6 @@
-const API_BASE = window.location.origin.includes('3000')
-  ? 'http://localhost:8000' // Dev mode: Vite proxy may miss some, fallback to direct
-  : window.location.origin;
+// Connect directly to the provided live backend API.
+// You can override this in local development by creating a .env in the frontend folder with VITE_API_URL=http://localhost:8000
+const API_BASE = import.meta.env.VITE_API_URL || 'https://gramai-0n2o.onrender.com';
 
 export const api = {
   async query(query, category, useLLM, language, mode = 'offline', history = null) {

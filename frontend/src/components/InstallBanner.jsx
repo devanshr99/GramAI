@@ -20,7 +20,7 @@ export default function InstallBanner({ t }) {
   const handleInstall = async () => {
     if (!prompt) return;
     prompt.prompt();
-    const { outcome } = await prompt.userChoice;
+    await prompt.userChoice;
     setShow(false);
     setPrompt(null);
   };
