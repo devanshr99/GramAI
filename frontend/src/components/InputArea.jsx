@@ -106,9 +106,11 @@ export default function InputArea({ t, onSend, processing, showToast, lang }) {
       if (event.error === 'no-speech') {
         showToast(`⚠️ ${t('noSpeech')}`);
       } else if (event.error === 'not-allowed') {
-        showToast(`⚠️ ${t('micUnavailable')} - Microphone permission denied`);
+        showToast(`⚠️ ${t('micUnavailable')} - Permission denied`);
       } else if (event.error === 'network') {
-        showToast(`⚠️ Speech recognition requires internet connection`);
+        // Native browser STT fails offline without device language packs
+        showToast(`⚠️ Offline Voice: Please download 'Hindi' offline speech pack in your phone's Google Voice settings.`);
+        console.warn('Speech recognition network error: Offline mode requires device language packs.');
       } else {
         showToast(`⚠️ ${t('voiceUnavailable')}: ${event.error}`);
       }
