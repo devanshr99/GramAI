@@ -4,6 +4,7 @@ import { useLanguage } from './hooks/useLanguage';
 import { api } from './api';
 import Header from './components/Header';
 import CategoryGrid from './components/CategoryGrid';
+import CategoryDetailView from './components/CategoryDetailView';
 import ChatArea from './components/ChatArea';
 import InputArea from './components/InputArea';
 import ModeToggle from './components/ModeToggle';
@@ -138,9 +139,23 @@ export default function App() {
         />
         <ModeToggle mode={mode} onSwitch={handleModeSwitch} t={t} onlineAvailable={onlineAIAvailable} />
 
-        {mode === 'offline' && (
+        {mode === 'offline' && !category && (
           <CategoryGrid t={t} category={category} onSelect={handleCategorySelect} />
         )}
+
+        <AnimatePresence mode="wait">
+          {mode === 'offline' && category && (
+            <CategoryDetailView 
+              category={category} 
+              t={t} 
+              onBack={() => {
+                setCategory(null);
+                showToast(t('allTopics'));
+              }} 
+              onFaqClick={(faqText) => handleSend(faqText)} 
+            />
+          )}
+        </AnimatePresence>
 
         <ChatArea
           messages={messages}
