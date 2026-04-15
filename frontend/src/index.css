@@ -653,7 +653,14 @@ body::before {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  max-height: 30vh;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
 }
+
+.faq-chips::-webkit-scrollbar { width: 4px; }
+.faq-chips::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 2px; }
 
 .faq-chip {
   text-align: left;
