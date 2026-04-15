@@ -5,6 +5,7 @@ import { api } from './api';
 import Header from './components/Header';
 import CategoryGrid from './components/CategoryGrid';
 import CategoryDetailView from './components/CategoryDetailView';
+import WeatherWidget from './components/WeatherWidget';
 import ChatArea from './components/ChatArea';
 import InputArea from './components/InputArea';
 import ModeToggle from './components/ModeToggle';
@@ -137,6 +138,7 @@ export default function App() {
           lang={lang} t={t} changeLanguage={changeLanguage}
           isOnline={isOnline} showToast={showToast}
         />
+        <WeatherWidget isOnline={isOnline} t={t} />
         <ModeToggle mode={mode} onSwitch={handleModeSwitch} t={t} onlineAvailable={onlineAIAvailable} />
 
         {mode === 'offline' && !category && (

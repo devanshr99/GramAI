@@ -31,8 +31,7 @@ from services.stt_service import stt_service
 from services.tts_service import tts_service
 
 # Import routers
-from routers import chat, voice, health
-
+from routers import chat, voice, health, weather
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -111,6 +110,7 @@ app.add_middleware(
 app.include_router(chat.router)
 app.include_router(voice.router)
 app.include_router(health.router)
+app.include_router(weather.router)
 
 # Serve frontend: supports Vite build (dist/) or dev public assets
 frontend_dir = Path(__file__).parent.parent / "frontend"
