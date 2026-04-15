@@ -36,16 +36,49 @@ class LLMService:
         system_prompt: Optional[str] = None,
         temperature: float = 0.7
     ) -> str:
-        """Generate a response using the Claude API."""
+        """Generate a response using the Claude API, fallback to OpenRouter/DeepSeek."""
+        import os
+        from services.online_ai import OPENROUTER_API_KEY, MODEL, OPENROUTER_URL
+
         if self._available is None:
             await self.check_availability()
-
-        if not self._available:
-            return self._fallback_response()
 
         full_system = system_prompt or SYSTEM_PROMPT
         if context:
             full_system += f"\n\nसंदर्भ जानकारी (Context):\n{context}"
+
+        if not self._available:
+            # Fallback to OpenRouter API if Anthropic is missing
+            if OPENROUTER_API_KEY:
+                try:
+                    response = await self.client.post(
+                        OPENROUTER_URL,
+                        headers={
+                            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                            "Content-Type": "application/json",
+                            "HTTP-Referer": "https://gramai.app",
+                            "X-Title": "GramAI",
+                        },
+                        json={
+                            "model": MODEL,
+                            "messages": [
+                                {"role": "system", "content": full_system},
+                                {"role": "user", "content": prompt}
+                            ],
+                            "max_tokens": 800,
+                            "temperature": temperature,
+                        }
+                    )
+                    if response.status_code == 200:
+                        data = response.json()
+                        choices = data.get("choices", [])
+                        if choices:
+                            return choices[0].get("message", {}).get("content", "कोई जवाब नहीं मिला।")
+                    return self._fallback_response()
+                except Exception as e:
+                    logger.error(f"Fallback OpenRouter error: {e}")
+                    return self._fallback_response()
+            return self._fallback_response()
 
         try:
             response = await self.client.post(
@@ -94,6 +127,34 @@ class LLMService:
             await self.check_availability()
 
         if not self._available:
+            # Fallback to OpenRouter API if Anthropic is missing
+            from services.online_ai import OPENROUTER_API_KEY, MODEL, OPENROUTER_URL
+            if OPENROUTER_API_KEY:
+                try:
+                    response = await self.client.post(
+                        OPENROUTER_URL,
+                        headers={
+                            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                            "Content-Type": "application/json",
+                            "HTTP-Referer": "https://gramai.app",
+                            "X-Title": "GramAI",
+                        },
+                        json={
+                            "model": MODEL,
+                            "messages": messages,
+                            "max_tokens": 1024,
+                            "temperature": temperature,
+                        }
+                    )
+                    if response.status_code == 200:
+                        data = response.json()
+                        choices = data.get("choices", [])
+                        if choices:
+                            return choices[0].get("message", {}).get("content", "कोई जवाब नहीं मिला।")
+                    return self._fallback_response()
+                except Exception as e:
+                    logger.error(f"Fallback Chat OpenRouter error: {e}")
+                    return self._fallback_response()
             return self._fallback_response()
 
         system_msg = SYSTEM_PROMPT
