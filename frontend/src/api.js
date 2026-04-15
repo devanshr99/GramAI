@@ -8,31 +8,58 @@ export const api = {
     if (mode === 'online' && history) {
       body.history = history.slice(-6).map(m => ({ role: m.role, text: m.text }));
     }
-    const res = await fetch(`${API_BASE}/api/chat/query`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-    if (!res.ok) throw new Error(`Server error: ${res.status}`);
-    return res.json();
+    
+    try {
+      const res = await fetch(`${API_BASE}/api/chat/query`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error(`Server error: ${res.status}`);
+      return await res.json();
+    } catch (error) {
+      // If there is no internet or backend is down, use the built-in offline database
+      console.warn("Network error or zero internet. Falling back to built-in frontend database.", error);
+      
+      const { fallbackSearch } = await import('./offlineDB.js');
+      const fallbackResponse = fallbackSearch(query);
+      
+      return {
+        response: fallbackResponse,
+        sources: [],
+        query: query,
+        category: null,
+        documents_found: 1,
+        language: language,
+        mode: 'offline'
+      };
+    }
   },
 
   async health() {
-    const res = await fetch(`${API_BASE}/api/health`);
-    return res.ok;
+    try {
+      const res = await fetch(`${API_BASE}/api/health`);
+      return res.ok;
+    } catch {
+      return false;
+    }
   },
 
   async status() {
-    const res = await fetch(`${API_BASE}/api/status`);
-    if (!res.ok) return null;
-    return res.json();
+    try {
+      const res = await fetch(`${API_BASE}/api/status`);
+      if (!res.ok) return null;
+      return await res.json();
+    } catch {
+      return null;
+    }
   },
 
   async onlineStatus() {
     try {
       const res = await fetch(`${API_BASE}/api/chat/online-status`);
       if (!res.ok) return { configured: false, available: false };
-      return res.json();
+      return await res.json();
     } catch { return { configured: false, available: false }; }
   },
 
