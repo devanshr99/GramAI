@@ -790,6 +790,14 @@ body::before {
   border-left: 3px solid var(--accent);
 }
 
+.weather-search-box {
+  margin-top: 10px;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px dashed var(--border);
+  overflow: hidden;
+}
+
 .skeleton-line {
   height: 20px;
   background: var(--surface-3);
