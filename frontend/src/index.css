@@ -77,9 +77,7 @@ body::before {
 .header {
   padding: 14px 16px;
   padding-top: max(14px, env(safe-area-inset-top));
-  background: var(--bg-glass);
-  backdrop-filter: blur(24px) saturate(1.4);
-  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  background: var(--bg-mid);
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
@@ -371,9 +369,7 @@ body::before {
 .input-area {
   padding: 12px 16px;
   padding-bottom: max(20px, env(safe-area-inset-bottom));
-  background: var(--bg-glass);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: var(--bg-mid);
   border-top: 1px solid var(--border);
   position: sticky;
   bottom: 0;

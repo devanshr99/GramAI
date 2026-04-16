@@ -23,7 +23,7 @@ async def get_weather(lat: float = 28.6139, lon: float = 77.2090, city: str = "N
     Returns temperature, condition, 3-hour forecast, and 7-day forecast.
     Falls back to backend cache if API fails.
     """
-    url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto"
+    url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min,windspeed_10m_max,precipitation_sum&timezone=auto"
     
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
@@ -34,7 +34,16 @@ async def get_weather(lat: float = 28.6139, lon: float = 77.2090, city: str = "N
         
         # WMO Weather interpretation codes function
         def get_cond(code):
-            return "☀️ Clear" if code <= 1 else "☁️ Cloudy" if code <= 3 else "🌧️ Rain"
+            if code == 0: return "☀️ Clear"
+            if code <= 3: return "☁️ Partly Cloudy"
+            if code <= 48: return "🌫️ Foggy"
+            if code <= 57: return "🌧️ Drizzle"
+            if code <= 67: return "🌧️ Rain"
+            if code <= 77: return "❄️ Snow"
+            if code <= 82: return "🌦️ Showers"
+            if code <= 86: return "❄️ Snow Showers"
+            if code <= 99: return "⛈️ Thunderstorm"
+            return "☁️ Cloudy"
 
         weather_code = current.get("weathercode", 0)
         cond = get_cond(weather_code)
@@ -69,7 +78,9 @@ async def get_weather(lat: float = 28.6139, lon: float = 77.2090, city: str = "N
                         "date": daily["time"][i],
                         "max_temp": daily["temperature_2m_max"][i],
                         "min_temp": daily["temperature_2m_min"][i],
-                        "condition": get_cond(daily["weathercode"][i])
+                        "condition": get_cond(daily["weathercode"][i]),
+                        "wind": daily.get("windspeed_10m_max", [0]*7)[i],
+                        "rain": daily.get("precipitation_sum", [0]*7)[i]
                     })
         except Exception as e:
             pass

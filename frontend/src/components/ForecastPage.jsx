@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
+import { createPortal } from 'react-dom';
 
 export default function ForecastPage({ dailyForecast, cityName, onClose, t }) {
-  return (
+  return createPortal(
     <motion.div 
       className="forecast-page-overlay"
       initial={{ opacity: 0, y: 50 }}
@@ -10,14 +11,14 @@ export default function ForecastPage({ dailyForecast, cityName, onClose, t }) {
       style={{
         position: 'fixed',
         top: 0, left: 0, right: 0, bottom: 0,
-        background: 'linear-gradient(135deg, var(--surface-1) 0%, var(--surface-2) 100%)',
-        zIndex: 1000,
+        background: 'var(--bg-start)',
+        zIndex: 9999,
         overflowY: 'auto',
         padding: '20px'
       }}
     >
       <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '20px 0' }}>
           <h2 style={{ margin: 0, color: 'var(--text-primary)', fontSize: '1.5rem' }}>
             📅 7-Day Forecast: {cityName}
           </h2>
@@ -58,7 +59,8 @@ export default function ForecastPage({ dailyForecast, cityName, onClose, t }) {
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
+                  marginBottom: '10px'
                 }}
               >
                 <div style={{ flex: 1 }}>
@@ -66,10 +68,14 @@ export default function ForecastPage({ dailyForecast, cityName, onClose, t }) {
                   <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{dateString}</div>
                 </div>
                 
-                <div style={{ flex: 1, textAlign: 'center', fontSize: '1.8rem' }}>
-                  {day.condition.split(' ')[0]} {/* Emoji only */}
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                <div style={{ flex: 1.5, textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.8rem' }}>{day.condition.split(' ')[0]}</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
                     {day.condition.replace(/^[^\w\s]+/u, '').trim()}
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginTop: '4px', fontSize: '0.7rem' }}>
+                    <span title="Wind speed">💨 {day.wind}km/h</span>
+                    <span title="Precipitation">💧 {day.rain}mm</span>
                   </div>
                 </div>
                 
@@ -82,6 +88,7 @@ export default function ForecastPage({ dailyForecast, cityName, onClose, t }) {
           })}
         </div>
       </div>
-    </motion.div>
+    </motion.div>,
+    document.body
   );
 }
