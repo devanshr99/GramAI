@@ -13,15 +13,17 @@ class WeatherResponse(BaseModel):
     city: str
     is_cached: bool = False
     prediction: str = ""
+    forecast_3h: dict = {}
+    daily_forecast: list = []
 
 @router.get("/", response_model=WeatherResponse)
 async def get_weather(lat: float = 28.6139, lon: float = 77.2090, city: str = "New Delhi"):
     """
     Fetch live weather from Open-Meteo (Free, No API Key needed).
-    Returns temperature, condition, and optional simple prediction.
+    Returns temperature, condition, 3-hour forecast, and 7-day forecast.
     Falls back to backend cache if API fails.
     """
-    url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true"
+    url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto"
     
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
@@ -30,10 +32,47 @@ async def get_weather(lat: float = 28.6139, lon: float = 77.2090, city: str = "N
         data = resp.json()
         current = data.get("current_weather", {})
         
-        # WMO Weather interpretation codes
+        # WMO Weather interpretation codes function
+        def get_cond(code):
+            return "☀️ Clear" if code <= 1 else "☁️ Cloudy" if code <= 3 else "🌧️ Rain"
+
         weather_code = current.get("weathercode", 0)
-        cond = "☀️ Clear" if weather_code <= 1 else "☁️ Cloudy" if weather_code <= 3 else "🌧️ Rain"
+        cond = get_cond(weather_code)
         temp = current.get("temperature", 0.0)
+        
+        # +3 Hours Forecast
+        forecast_3h = {}
+        try:
+            hourly = data.get("hourly", {})
+            current_time = current.get("time") # e.g., "2023-10-27T14:00"
+            if current_time and "time" in hourly:
+                times = hourly["time"]
+                if current_time in times:
+                    idx = times.index(current_time)
+                    target_idx = idx + 3
+                    if target_idx < len(times):
+                        forecast_3h = {
+                            "time": times[target_idx],
+                            "temperature": hourly["temperature_2m"][target_idx],
+                            "condition": get_cond(hourly["weathercode"][target_idx])
+                        }
+        except Exception as e:
+            pass
+
+        # Daily Forecast
+        daily_forecast = []
+        try:
+            daily = data.get("daily", {})
+            if "time" in daily:
+                for i in range(min(7, len(daily["time"]))):
+                    daily_forecast.append({
+                        "date": daily["time"][i],
+                        "max_temp": daily["temperature_2m_max"][i],
+                        "min_temp": daily["temperature_2m_min"][i],
+                        "condition": get_cond(daily["weathercode"][i])
+                    })
+        except Exception as e:
+            pass
         
         # Load local history for basic prediction mapping
         history = []
@@ -64,7 +103,9 @@ async def get_weather(lat: float = 28.6139, lon: float = 77.2090, city: str = "N
             "condition": cond,
             "city": city,
             "is_cached": False,
-            "prediction": prediction
+            "prediction": prediction,
+            "forecast_3h": forecast_3h,
+            "daily_forecast": daily_forecast
         }
         
         # Save to cache

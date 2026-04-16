@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ForecastPage from './ForecastPage';
 
 export default function WeatherWidget({ isOnline, t }) {
   const [weather, setWeather] = useState(null);
@@ -9,6 +10,7 @@ export default function WeatherWidget({ isOnline, t }) {
   // UI States
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showForecast, setShowForecast] = useState(false);
   
   // Location Preferences
   const [locPrefs, setLocPrefs] = useState(() => {
@@ -199,6 +201,15 @@ export default function WeatherWidget({ isOnline, t }) {
             <span className="condition-text">{weather.condition.replace(/^[^\w\s]+/u, '').trim()}</span>
           </div>
         </div>
+        
+        {weather.forecast_3h && weather.forecast_3h.time && (
+          <div style={{ marginTop: '15px', padding: '10px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>In 3 Hours:</span>
+            <span style={{ fontWeight: 'bold', display: 'flex', gap: '5px', alignItems: 'center' }}>
+              {weather.forecast_3h.condition.split(' ')[0]} {weather.forecast_3h.temperature}°C
+            </span>
+          </div>
+        )}
       </div>
       
       {weather.prediction && (
@@ -206,6 +217,40 @@ export default function WeatherWidget({ isOnline, t }) {
           <span className="prediction-text">🤖 AI: {weather.prediction}</span>
         </div>
       )}
+      
+      {weather.daily_forecast && weather.daily_forecast.length > 0 && (
+        <button 
+          onClick={() => setShowForecast(true)}
+          style={{
+            marginTop: '15px',
+            width: '100%',
+            padding: '12px',
+            borderRadius: '12px',
+            border: 'none',
+            background: 'linear-gradient(90deg, #3b82f6, #8b5cf6)',
+            color: 'white',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            boxShadow: '0 4px 6px rgba(59, 130, 246, 0.3)',
+            transition: 'transform 0.2s',
+          }}
+          onMouseOver={(e) => e.target.style.transform = 'translateY(-2px)'}
+          onMouseOut={(e) => e.target.style.transform = 'translateY(0)'}
+        >
+          📅 Upcoming Days Weather
+        </button>
+      )}
+
+      <AnimatePresence>
+        {showForecast && (
+          <ForecastPage 
+            dailyForecast={weather.daily_forecast} 
+            cityName={weather.city} 
+            onClose={() => setShowForecast(false)} 
+            t={t}
+          />
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
