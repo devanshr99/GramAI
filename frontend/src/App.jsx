@@ -40,6 +40,10 @@ export default function App() {
 
   // Server health check
   useEffect(() => {
+    // Dismiss loading screen quickly to open app fast
+    const timer = setTimeout(() => setLoading(false), 200);
+
+    // Perform health checks in background
     (async () => {
       try {
         const ok = await api.health();
@@ -53,8 +57,9 @@ export default function App() {
           setOnlineAIAvailable(aiStatus.available);
         }
       } catch { setIsOnline(false); }
-      setTimeout(() => setLoading(false), 500);
     })();
+
+    return () => clearTimeout(timer);
   }, []);
 
   const handleSend = useCallback(async (text) => {

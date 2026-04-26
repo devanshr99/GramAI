@@ -7,10 +7,10 @@
   --primary-glow: rgba(16,185,129,0.35);
   --accent: #6366f1;
   --accent-light: #818cf8;
-  --bg-start: #020617;
-  --bg-mid: #0f172a;
-  --bg-card: rgba(15,23,42,0.6);
-  --bg-glass: rgba(15,23,42,0.65);
+  --bg-start: #000000;
+  --bg-mid: #050505;
+  --bg-card: rgba(10,10,10,0.7);
+  --bg-glass: rgba(10,10,10,0.75);
   --text-primary: #f8fafc;
   --text-secondary: #cbd5e1;
   --text-muted: #64748b;
@@ -18,9 +18,9 @@
   --border-active: rgba(16,185,129,0.4);
   --success: #10b981;
   --error: #f43f5e;
-  --surface-1: rgba(255,255,255,0.03);
-  --surface-2: rgba(255,255,255,0.06);
-  --surface-3: rgba(255,255,255,0.1);
+  --surface-1: rgba(255,255,255,0.02);
+  --surface-2: rgba(255,255,255,0.04);
+  --surface-3: rgba(255,255,255,0.08);
   --radius-sm: 12px;
   --radius-md: 16px;
   --radius-lg: 24px;
@@ -83,7 +83,7 @@ body::before {
 .header {
   padding: 14px 16px;
   padding-top: max(14px, env(safe-area-inset-top));
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
@@ -159,7 +159,7 @@ body::before {
   width: 185px;
   max-height: 400px;
   overflow-y: auto;
-  background: rgba(15,23,42,0.95);
+  background: rgba(10, 10, 10, 0.95);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   box-shadow: 0 12px 40px rgba(0,0,0,0.6);
@@ -386,7 +386,7 @@ body::before {
 .input-area {
   padding: 12px 16px;
   padding-bottom: max(20px, env(safe-area-inset-bottom));
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid var(--border);
