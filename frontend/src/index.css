@@ -311,6 +311,7 @@ body::before {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  background: #0a0a0a; /* Removed transparent design */
 }
 .chat-area::-webkit-scrollbar { width: 3px; }
 .chat-area::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 2px; }
@@ -669,7 +670,7 @@ body::before {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 30vh;
+  max-height: 65vh; /* Increased to avoid cutting off */
   overflow-y: auto;
   padding-right: 4px;
   scrollbar-width: thin;
@@ -678,21 +679,65 @@ body::before {
 .faq-chips::-webkit-scrollbar { width: 4px; }
 .faq-chips::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 2px; }
 
-.faq-chip {
-  text-align: left;
+.faq-chip-wrapper {
   background: var(--surface-2);
   border: 1px solid var(--border);
-  padding: 12px 16px;
   border-radius: var(--radius-md);
-  color: var(--text-primary);
-  font-family: var(--font-hindi);
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
+  overflow: hidden;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   transition: all 0.3s var(--ease);
+}
+.faq-chip-wrapper.expanded {
+  background: var(--surface-3);
+  border-color: var(--primary-light);
+}
+
+.faq-chip {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 14px 16px;
+  color: var(--text-primary);
+  font-family: var(--font-hindi);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
   position: relative;
-  overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  white-space: normal;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+
+.faq-answer {
+  padding: 0 16px 16px 16px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  border-top: 1px dashed rgba(255,255,255,0.05);
+  margin-top: 4px;
+  padding-top: 12px;
+}
+
+.ask-ai-btn {
+  margin-top: 12px;
+  padding: 6px 14px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid var(--primary-active);
+  color: var(--primary-light);
+  border-radius: var(--radius-xl);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.ask-ai-btn:hover {
+  background: var(--primary);
+  color: #fff;
 }
 
 .faq-chip::before {

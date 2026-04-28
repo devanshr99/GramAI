@@ -1,5 +1,6 @@
-import { motion } from 'framer-motion';
-import { CATEGORY_FAQS } from '../offlineDB.js';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CATEGORY_FAQS, fallbackSearch } from '../offlineDB.js';
 
 const CATEGORIES = {
   'कृषि': { icon: '🌱', key: 'catAgri', en: 'Agriculture', color: 'var(--primary)' },
@@ -9,9 +10,15 @@ const CATEGORIES = {
 };
 
 export default function CategoryDetailView({ category, t, onBack, onFaqClick }) {
+  const [expandedIndex, setExpandedIndex] = useState(null);
+
   if (!category || !CATEGORIES[category]) return null;
   const catInfo = CATEGORIES[category];
   const faqs = CATEGORY_FAQS[catInfo.key] || [];
+
+  const handleToggle = (i) => {
+    setExpandedIndex(expandedIndex === i ? null : i);
+  };
 
   return (
     <motion.div 
@@ -36,22 +43,56 @@ export default function CategoryDetailView({ category, t, onBack, onFaqClick }) 
       </div>
       
       <div className="faq-section">
-        <p className="faq-prompt">👉 {t('Frequently Asked Questions') || 'Frequently Asked Questions (Click to Ask)'}</p>
+        <p className="faq-prompt">👉 {t('Frequently Asked Questions') || 'Frequently Asked Questions (Click to View)'}</p>
         <div className="faq-chips">
-          {faqs.map((faq, i) => (
-            <motion.button 
-              key={i} 
-              className="faq-chip"
-              onClick={() => onFaqClick(faq)}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1, duration: 0.3 }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              {faq}
-            </motion.button>
-          ))}
+          {faqs.map((faq, i) => {
+            const isExpanded = expandedIndex === i;
+            // Get offline answer and strip the wrapper prefix
+            const answerText = fallbackSearch(faq).replace('(Offline Mode)\\nज्ञान आधार से प्रमाणित जानकारी:\\n\\n', '');
+            
+            return (
+              <motion.div 
+                key={i} 
+                className={`faq-chip-wrapper ${isExpanded ? 'expanded' : ''}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1, duration: 0.3 }}
+              >
+                <button 
+                  className="faq-chip"
+                  onClick={() => handleToggle(i)}
+                >
+                  <span style={{flex: 1, textAlign: 'left'}}>{faq}</span>
+                  <motion.span 
+                    animate={{ rotate: isExpanded ? 180 : 0 }}
+                    transition={{ duration: 0.3 }}
+                    style={{ fontSize: '0.8rem', opacity: 0.7 }}
+                  >
+                    ▼
+                  </motion.span>
+                </button>
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      style={{ overflow: 'hidden' }}
+                    >
+                      <div className="faq-answer">
+                        {answerText}
+                        <br/>
+                        <button className="ask-ai-btn" onClick={() => onFaqClick(faq)}>
+                          Ask AI in Chat 💬
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </motion.div>
