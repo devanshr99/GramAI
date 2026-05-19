@@ -146,12 +146,12 @@ export default function App() {
         <WeatherWidget isOnline={isOnline} t={t} />
         <ModeToggle mode={mode} onSwitch={handleModeSwitch} t={t} onlineAvailable={onlineAIAvailable} />
 
-        {mode === 'offline' && !category && (
+        {!category && (
           <CategoryGrid t={t} category={category} onSelect={handleCategorySelect} />
         )}
 
         <AnimatePresence mode="wait">
-          {mode === 'offline' && category && (
+          {category && (
             <CategoryDetailView 
               category={category} 
               t={t} 

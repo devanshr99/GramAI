@@ -83,9 +83,7 @@ body::before {
 .header {
   padding: 14px 16px;
   padding-top: max(14px, env(safe-area-inset-top));
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: #0a0a0a;
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
@@ -387,12 +385,11 @@ body::before {
 .input-area {
   padding: 12px 16px;
   padding-bottom: max(20px, env(safe-area-inset-bottom));
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: #0a0a0a;
   border-top: 1px solid var(--border);
   position: sticky;
   bottom: 0;
+  z-index: 50;
 }
 .input-row {
   display: flex;

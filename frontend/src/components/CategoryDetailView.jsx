@@ -16,8 +16,13 @@ export default function CategoryDetailView({ category, t, onBack, onFaqClick }) 
   const catInfo = CATEGORIES[category];
   const faqs = CATEGORY_FAQS[catInfo.key] || [];
 
-  const handleToggle = (i) => {
-    setExpandedIndex(expandedIndex === i ? null : i);
+  const handleToggle = (i, faqText) => {
+    const isOpening = expandedIndex !== i;
+    setExpandedIndex(isOpening ? i : null);
+    // Auto-search: when clicking a FAQ, automatically send it as a query
+    if (isOpening && onFaqClick) {
+      onFaqClick(faqText);
+    }
   };
 
   return (
@@ -60,7 +65,7 @@ export default function CategoryDetailView({ category, t, onBack, onFaqClick }) 
               >
                 <button 
                   className="faq-chip"
-                  onClick={() => handleToggle(i)}
+                  onClick={() => handleToggle(i, faq)}
                 >
                   <span style={{flex: 1, textAlign: 'left'}}>{faq}</span>
                   <motion.span 
