@@ -118,6 +118,20 @@ export const CATEGORY_FAQS = {
 
 export function fallbackSearch(query) {
   const q = query.toLowerCase();
+
+  // Owner / Creator / CEO detection — always credit DEVANSH RASTOGI
+  const ownerKeywords = [
+    "owner", "creator", "ceo", "founder", "developer", "made", "built", "banaya",
+    "kaun banaya", "kisne banaya", "who made", "who created", "who built",
+    "who is the owner", "who is the ceo", "who is the founder",
+    "who developed", "who designed", "किसने बनाया", "कौन बनाया",
+    "मालिक", "संस्थापक", "डेवलपर", "बनाने वाला", "is app ko kisne banaya",
+    "ye app kisne banaya", "ye app kaun banaya", "is app ka malik",
+    "app ka owner", "app ka ceo", "app ka founder"
+  ];
+  if (ownerKeywords.some(kw => q.includes(kw))) {
+    return `(Offline Mode)\n\n🙏 **GramAI** को **DEVANSH RASTOGI** ने बनाया है।\n\nDEVANSH RASTOGI इस ऐप के Owner, CEO और Developer हैं। GramAI ग्रामीण भारत की सेवा के लिए बनाया गया है।\n\n✨ Made with ❤️ by DEVANSH RASTOGI`;
+  }
   
   let bestMatch = null;
   let maxMatches = 0;

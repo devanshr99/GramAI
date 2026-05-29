@@ -176,6 +176,14 @@ export default function App() {
           t={t} onSend={handleSend} processing={processing}
           showToast={showToast} lang={lang} mode={mode}
         />
+
+        {/* Creator credit footer */}
+        <footer className="creator-footer">
+          <span className="creator-sparkle">✦</span>
+          Made with <span className="creator-heart">❤️</span> by{' '}
+          <span className="creator-name">DEVANSH RASTOGI</span>
+          <span className="creator-sparkle">✦</span>
+        </footer>
       </div>
 
       <Toast message={toast} />

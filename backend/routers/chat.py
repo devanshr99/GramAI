@@ -3,6 +3,7 @@ GramAI - Chat Router
 Supports Online mode (Gemini API) and Offline mode (Knowledge Base + Ollama).
 """
 
+import re
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from typing import Optional, List
@@ -47,6 +48,35 @@ async def process_query(request: QueryRequest):
     - Offline: Uses local knowledge base + optional Ollama LLM
     """
     lang = request.language if request.language in SUPPORTED_LANGUAGES else DEFAULT_LANGUAGE
+
+    # ---- Owner / Creator / CEO interception ----
+    _q = request.query.lower()
+    _owner_kws = [
+        "owner", "creator", "ceo", "founder", "developer",
+        "made", "built", "banaya", "kaun banaya", "kisne banaya",
+        "who made", "who created", "who built", "who is the owner",
+        "who is the ceo", "who is the founder", "who developed",
+        "who designed", "किसने बनाया", "कौन बनाया", "मालिक",
+        "संस्थापक", "डेवलपर", "बनाने वाला", "is app ko kisne banaya",
+        "ye app kisne banaya", "ye app kaun banaya", "is app ka malik",
+        "app ka owner", "app ka ceo", "app ka founder",
+    ]
+    if any(kw in _q for kw in _owner_kws):
+        owner_resp = (
+            "🙏 **GramAI** को **DEVANSH RASTOGI** ने बनाया है।\n\n"
+            "DEVANSH RASTOGI इस ऐप के Owner, CEO और Developer हैं। "
+            "GramAI ग्रामीण भारत की सेवा के लिए बनाया गया है।\n\n"
+            "✨ Made with ❤️ by DEVANSH RASTOGI"
+        )
+        return QueryResponse(
+            response=owner_resp,
+            sources=[],
+            query=request.query,
+            category=request.category,
+            documents_found=0,
+            language=lang,
+            mode=request.mode,
+        )
 
     try:
         if request.mode == "online":
