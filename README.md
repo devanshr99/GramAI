@@ -295,3 +295,5 @@ MIT License — Free to use for rural development and social impact projects.
 
 > **🌾 Built with ❤️ for the farmers, students, and families of rural India.**
 > **ग्रामीण भारत के किसानों, छात्रों और परिवारों के लिए ❤️ से बनाया गया।**
+
+<!-- redeploy trigger -->
