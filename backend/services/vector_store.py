@@ -1,56 +1,21 @@
 """
-GramAI - Vector Store Service (Improved)
-JSON-based search with bilingual English-Hindi support.
+GramAI - Vector Store Service (FAISS + Sentence-Transformers)
+Performs local semantic search over the knowledge base with automatic caching.
 """
 
 import json
-import math
 import logging
+import os
 import re
 from pathlib import Path
 from typing import List, Dict, Optional
-from collections import Counter
+import numpy as np
 
-from config import DATA_DIR
+from config import DATA_DIR, EMBEDDING_MODEL
 
 logger = logging.getLogger(__name__)
 
-# English-Hindi category and keyword mapping for cross-language search
-EN_HI_MAP = {
-    # Category mappings
-    'agriculture': 'कृषि', 'farming': 'कृषि', 'crop': 'कृषि', 'crops': 'कृषि',
-    'health': 'स्वास्थ्य', 'medical': 'स्वास्थ्य', 'medicine': 'स्वास्थ्य',
-    'doctor': 'स्वास्थ्य', 'disease': 'स्वास्थ्य', 'fever': 'बुखार',
-    'education': 'शिक्षा', 'school': 'शिक्षा', 'college': 'शिक्षा',
-    'scholarship': 'छात्रवृत्ति', 'study': 'शिक्षा',
-    'scheme': 'सरकारी योजना', 'schemes': 'सरकारी योजना', 'government': 'सरकारी',
-    'pension': 'पेंशन', 'insurance': 'बीमा',
-    # Agriculture terms
-    'wheat': 'गेहूं', 'rice': 'धान', 'paddy': 'धान', 'potato': 'आलू',
-    'fertilizer': 'उर्वरक', 'irrigation': 'सिंचाई', 'water': 'पानी',
-    'pest': 'कीट', 'organic': 'जैविक', 'soil': 'मिट्टी',
-    'seed': 'बीज', 'sowing': 'बुवाई', 'harvest': 'कटाई',
-    'cultivate': 'खेती', 'cultivation': 'खेती', 'farm': 'खेती',
-    'grow': 'उगाना', 'growing': 'खेती', 'plant': 'पौधा', 'planting': 'बुवाई',
-    'vegetable': 'सब्जी', 'fruit': 'फल', 'dairy': 'दूध', 'cow': 'गाय',
-    'buffalo': 'भैंस', 'animal': 'पशुपालन', 'cattle': 'पशुपालन',
-    'drip': 'ड्रिप', 'sprinkler': 'स्प्रिंकलर', 'urea': 'यूरिया',
-    'compost': 'खाद', 'manure': 'खाद', 'neem': 'नीम',
-    # Health terms
-    'malaria': 'मलेरिया', 'dengue': 'डेंगू', 'diarrhea': 'दस्त',
-    'cold': 'सर्दी', 'cough': 'खांसी', 'pregnancy': 'गर्भावस्था',
-    'vaccine': 'टीकाकरण', 'vaccination': 'टीकाकरण', 'hospital': 'अस्पताल',
-    'treatment': 'इलाज', 'cure': 'इलाज', 'remedy': 'उपचार',
-    # Education terms
-    'exam': 'परीक्षा', 'admission': 'प्रवेश', 'degree': 'डिग्री',
-    'engineering': 'इंजीनियरिंग',
-    # How/what/why helpers
-    'how': '', 'what': '', 'is': '', 'the': '', 'to': '', 'do': '',
-    'can': '', 'about': '', 'tell': '', 'explain': '', 'me': '',
-    'please': '', 'give': '', 'information': '', 'info': '',
-}
-
-# English query to category hint
+# Category mapped keywords for intelligent filtering/intent hints
 EN_CATEGORY_HINTS = {
     'crop': 'कृषि', 'crops': 'कृषि', 'farming': 'कृषि', 'agriculture': 'कृषि',
     'grow': 'कृषि', 'growing': 'कृषि', 'plant': 'कृषि', 'seed': 'कृषि',
@@ -70,29 +35,60 @@ EN_CATEGORY_HINTS = {
 
 
 class VectorStoreService:
-    """Bilingual keyword search using TF-IDF similarity."""
+    """Semantic vector search using Sentence-Transformers and FAISS."""
 
     def __init__(self):
         self.documents: List[Dict] = []
-        self.doc_tokens: List[List[str]] = []
-        self.idf: Dict[str, float] = {}
+        self.index = None
+        self.embedder = None
         self._initialized = False
+        self.cache_dir = DATA_DIR / "faiss_index"
 
     def initialize(self):
         if self._initialized:
             return
-        logger.info("Initializing lightweight vector store...")
+        logger.info("Initializing FAISS Vector Store...")
+        
+        self.cache_dir.mkdir(exist_ok=True, parents=True)
+        index_path = self.cache_dir / "index.faiss"
+        docs_path = self.cache_dir / "documents.json"
+
+        # Load SentenceTransformer first
+        try:
+            from sentence_transformers import SentenceTransformer
+            self.embedder = SentenceTransformer(EMBEDDING_MODEL)
+        except Exception as e:
+            logger.error(f"Error loading embedding model: {e}")
+            raise e
+
+        # Check if cached index exists
+        if index_path.exists() and docs_path.exists():
+            try:
+                import faiss
+                self.index = faiss.read_index(str(index_path))
+                with open(docs_path, "r", encoding="utf-8") as f:
+                    self.documents = json.load(f)
+                self._initialized = True
+                logger.info(f"Loaded FAISS index from cache with {len(self.documents)} documents.")
+                return
+            except Exception as e:
+                logger.warning(f"Failed to load cached index: {e}. Rebuilding index...")
+
+        # Rebuild if cache missed or failed
         self._load_all_data()
         self._build_index()
         self._initialized = True
-        logger.info(f"Vector store ready with {len(self.documents)} documents.")
 
     def _load_all_data(self):
+        self.documents = []
         data_files = {
             "agriculture.json": "कृषि",
             "education.json": "शिक्षा",
             "health.json": "स्वास्थ्य",
-            "schemes.json": "सरकारी योजना"
+            "schemes.json": "सरकारी योजना",
+            "science.json": "शिक्षा",
+            "mathematics.json": "शिक्षा",
+            "history_geography.json": "शिक्षा"
         }
         for filename, category in data_files.items():
             filepath = DATA_DIR / filename
@@ -102,122 +98,86 @@ class VectorStoreService:
                         data = json.load(f)
                     for item in data:
                         self.documents.append({
-                            "id": item["id"],
+                            "id": item.get("id", ""),
                             "category": item.get("category", category),
                             "subcategory": item.get("subcategory", ""),
                             "title": item.get("title", ""),
                             "content": item.get("content", ""),
                             "keywords": item.get("keywords", []),
-                            "full_text": f"{item.get('title', '')} {item.get('content', '')} {' '.join(item.get('keywords', []))}"
+                            "full_text": f"{item.get('title', '')}: {item.get('content', '')} {' '.join(item.get('keywords', []))}"
                         })
                     logger.info(f"Loaded {len(data)} documents from {filename}")
                 except Exception as e:
                     logger.error(f"Error loading {filepath}: {e}")
 
-    def _tokenize(self, text: str) -> List[str]:
-        text = text.lower()
-        tokens = re.findall(r'[\w\u0900-\u097F]+', text)
-        return [t for t in tokens if len(t) > 1]
+    def _build_index(self):
+        if not self.documents:
+            logger.warning("No documents loaded to build index.")
+            return
 
-    def _translate_query(self, tokens: List[str]) -> List[str]:
-        """Expand English tokens to include Hindi equivalents."""
-        expanded = list(tokens)
-        for token in tokens:
-            hindi = EN_HI_MAP.get(token)
-            if hindi:
-                expanded.extend(self._tokenize(hindi))
-        return expanded
+        import faiss
+        logger.info("Generating embeddings for documents...")
+        texts = [doc["full_text"] for doc in self.documents]
+        
+        # Compute embeddings
+        embeddings = self.embedder.encode(texts, show_progress_bar=False)
+        embeddings = np.array(embeddings).astype('float32')
+        
+        dimension = embeddings.shape[1]
+        self.index = faiss.IndexFlatL2(dimension)
+        self.index.add(embeddings)
 
-    def _detect_category_hint(self, tokens: List[str]) -> Optional[str]:
-        """Detect likely category from English tokens."""
-        cat_votes = Counter()
+        # Cache FAISS index and documents list
+        try:
+            faiss.write_index(self.index, str(self.cache_dir / "index.faiss"))
+            with open(self.cache_dir / "documents.json", "w", encoding="utf-8") as f:
+                json.dump(self.documents, f, ensure_ascii=False, indent=2)
+            logger.info("Saved FAISS index cache.")
+        except Exception as e:
+            logger.error(f"Error saving FAISS cache: {e}")
+
+    def _detect_category_hint(self, query: str) -> Optional[str]:
+        """Detect likely category from query terms."""
+        tokens = re.findall(r'\w+', query.lower())
         for token in tokens:
             cat = EN_CATEGORY_HINTS.get(token)
             if cat:
-                cat_votes[cat] += 1
-        if cat_votes:
-            return cat_votes.most_common(1)[0][0]
+                return cat
         return None
-
-    def _build_index(self):
-        self.doc_tokens = [self._tokenize(doc["full_text"]) for doc in self.documents]
-        n_docs = len(self.documents)
-        doc_freq = Counter()
-        for tokens in self.doc_tokens:
-            for token in set(tokens):
-                doc_freq[token] += 1
-        self.idf = {
-            token: math.log((n_docs + 1) / (freq + 1)) + 1
-            for token, freq in doc_freq.items()
-        }
-
-    def _score(self, query_tokens: List[str], doc_idx: int) -> float:
-        if not query_tokens or doc_idx >= len(self.doc_tokens):
-            return 0.0
-        doc_tokens = self.doc_tokens[doc_idx]
-        doc = self.documents[doc_idx]
-        doc_counter = Counter(doc_tokens)
-        score = 0.0
-
-        for token in query_tokens:
-            tf = doc_counter.get(token, 0) / max(len(doc_tokens), 1)
-            idf = self.idf.get(token, 1.0)
-            score += tf * idf
-
-            # Bonus for keyword match
-            lower_keywords = [k.lower() for k in doc["keywords"]]
-            if token in lower_keywords:
-                score += 3.0
-
-            # Bonus for title match
-            if token in self._tokenize(doc["title"]):
-                score += 2.0
-
-        return score
 
     def search(self, query: str, n_results: int = 3, category: Optional[str] = None) -> List[Dict]:
         if not self._initialized:
             self.initialize()
 
-        query_tokens = self._tokenize(query)
-        if not query_tokens:
+        if not self.documents or self.index is None:
             return []
 
-        # Expand English tokens to Hindi equivalents
-        expanded_tokens = self._translate_query(query_tokens)
-        # Remove empty strings
-        expanded_tokens = [t for t in expanded_tokens if t]
+        # Encode query
+        query_embedding = self.embedder.encode([query])
+        query_embedding = np.array(query_embedding).astype('float32')
 
-        # Auto-detect category from English query if not specified
-        effective_category = category
-        if not effective_category:
-            hint = self._detect_category_hint(query_tokens)
-            if hint:
-                effective_category = hint
+        # Retrieve candidates (fetch more candidates to filter by category)
+        import faiss
+        search_k = min(len(self.documents), n_results * 5)
+        distances, indices = self.index.search(query_embedding, search_k)
 
-        # Score all documents
-        scored = []
-        for i, doc in enumerate(self.documents):
+        effective_category = category or self._detect_category_hint(query)
+
+        results = []
+        for dist, idx in zip(distances[0], indices[0]):
+            if idx == -1 or idx >= len(self.documents):
+                continue
+            
+            doc = self.documents[idx]
+            
+            # Apply category filtering if set
             if effective_category and doc["category"] != effective_category:
                 continue
 
-            score = self._score(expanded_tokens, i)
-            if score > 0:
-                scored.append((i, score))
+            # Calculate a normalized relevance score from L2 distance (L2 distance near 0 means high similarity)
+            # Normalization helper: score = 1 / (1 + distance)
+            relevance = float(1.0 / (1.0 + float(dist)))
 
-        # If category filtering returned nothing, try without category filter
-        if not scored and effective_category:
-            for i, doc in enumerate(self.documents):
-                score = self._score(expanded_tokens, i)
-                if score > 0:
-                    scored.append((i, score))
-
-        scored.sort(key=lambda x: x[1], reverse=True)
-
-        results = []
-        max_score = scored[0][1] if scored else 1.0
-        for idx, score in scored[:n_results]:
-            doc = self.documents[idx]
             results.append({
                 "content": f"{doc['title']}. {doc['content']}",
                 "metadata": {
@@ -225,8 +185,31 @@ class VectorStoreService:
                     "subcategory": doc["subcategory"],
                     "title": doc["title"],
                 },
-                "relevance_score": round(min(score / max_score, 1.0), 3)
+                "relevance_score": round(relevance, 3)
             })
+
+            if len(results) >= n_results:
+                break
+
+        # Fallback: if category filter yielded no results, return top matches without category filter
+        if not results:
+            for dist, idx in zip(distances[0], indices[0]):
+                if idx == -1 or idx >= len(self.documents):
+                    continue
+                doc = self.documents[idx]
+                relevance = float(1.0 / (1.0 + float(dist)))
+                results.append({
+                    "content": f"{doc['title']}. {doc['content']}",
+                    "metadata": {
+                        "category": doc["category"],
+                        "subcategory": doc["subcategory"],
+                        "title": doc["title"],
+                    },
+                    "relevance_score": round(relevance, 3)
+                })
+                if len(results) >= n_results:
+                    break
+
         return results
 
     def count(self) -> int:

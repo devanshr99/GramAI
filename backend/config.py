@@ -92,3 +92,7 @@ SYSTEM_PROMPT = SYSTEM_PROMPTS[DEFAULT_LANGUAGE]
 
 # Embedding model (small, runs on CPU)
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
+
+# Local LLM Configuration (Phi-3 Mini GGUF or Qwen2.5 0.5B for fast CPU testing)
+LOCAL_LLM_REPO = os.getenv("LOCAL_LLM_REPO", "microsoft/Phi-3-mini-4k-instruct-gguf")
+LOCAL_LLM_FILE = os.getenv("LOCAL_LLM_FILE", "Phi-3-mini-4k-instruct-q4.gguf")

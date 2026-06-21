@@ -103,7 +103,8 @@ async def process_query(request: QueryRequest):
                 user_query=request.query,
                 category=request.category,
                 use_llm=request.use_llm,
-                language=lang
+                language=lang,
+                history=request.history
             )
             result["language"] = lang
             result["mode"] = "offline"
