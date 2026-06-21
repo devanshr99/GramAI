@@ -62,9 +62,12 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleSend = useCallback(async (text) => {
-    if (!text.trim() || processing) return;
+  const handleSend = useCallback(async (text, image = null) => {
+    if ((!text.trim() && !image) || processing) return;
     const userMsg = { role: 'user', text, time: new Date() };
+    if (image) {
+      userMsg.image = image;
+    }
 
     // Add to the correct message list
     const currentSetMessages = mode === 'online' ? setOnlineMessages : setOfflineMessages;
@@ -80,7 +83,8 @@ export default function App() {
         useLLM,
         lang,
         mode,
-        currentMessages
+        currentMessages,
+        image
       );
       currentSetMessages(prev => [...prev, {
         role: 'bot',

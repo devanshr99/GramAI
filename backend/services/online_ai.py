@@ -13,16 +13,17 @@ logger = logging.getLogger(__name__)
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-MODEL = "deepseek/deepseek-v3.2-exp"
+MODEL = os.getenv("ONLINE_AI_MODEL", "google/gemini-2.5-flash")
 
 
 class OnlineAIService:
-    """Online AI chat via OpenRouter + DeepSeek v3.2."""
+    """Online AI chat via OpenRouter (defaults to Gemini 2.5 Flash)."""
 
     def __init__(self):
         self.api_key = OPENROUTER_API_KEY
         self.client = httpx.AsyncClient(timeout=60.0)
         self._available = False
+        self.model_name = MODEL
 
     def is_configured(self) -> bool:
         return bool(self.api_key)
@@ -39,7 +40,8 @@ class OnlineAIService:
         query: str,
         language: str = "en",
         system_prompt: Optional[str] = None,
-        history: Optional[list] = None
+        history: Optional[list] = None,
+        image: Optional[str] = None
     ) -> str:
         if not self.api_key:
             return (
@@ -89,7 +91,22 @@ class OnlineAIService:
                     role = "user" if msg.get("role") == "user" else "assistant"
                     messages.append({"role": role, "content": text})
 
-        messages.append({"role": "user", "content": query})
+        # Append current user prompt (multimodal if image is present)
+        if image:
+            messages.append({
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": query},
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": image
+                        }
+                    }
+                ]
+            })
+        else:
+            messages.append({"role": "user", "content": query})
 
         try:
             resp = await self.client.post(
@@ -101,7 +118,7 @@ class OnlineAIService:
                     "X-Title": "GramAI",
                 },
                 json={
-                    "model": MODEL,
+                    "model": self.model_name,
                     "messages": messages,
                     "max_tokens": 800,
                     "temperature": 0.7,

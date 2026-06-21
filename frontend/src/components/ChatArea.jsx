@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../api';
 import { TTS_CODES } from '../i18n/translations';
@@ -16,6 +16,7 @@ function formatText(text) {
 function Message({ msg, t, lang }) {
   const isBot = msg.role === 'bot';
   const time = msg.time.toLocaleTimeString(TTS_CODES[lang] || 'hi-IN', { hour: '2-digit', minute: '2-digit' });
+  const [isZoomed, setIsZoomed] = useState(false);
 
   const handleSpeak = async (e) => {
     const btn = e.currentTarget;
@@ -41,38 +42,68 @@ function Message({ msg, t, lang }) {
   };
 
   return (
-    <motion.div
-      className={`msg ${msg.role}`}
-      initial={{ opacity: 0, y: 16, scale: 0.97 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-    >
-      <div className="msg-avatar">{isBot ? '🌾' : '👤'}</div>
-      <div className="msg-bubble">
-        <div className="msg-text" dangerouslySetInnerHTML={{ __html: formatText(msg.text) }} />
-        {isBot && msg.sources?.length > 0 && (
-          <div className="msg-sources">
-            📖 {t('source')}:
-            {msg.sources.filter(s => s.title).map((s, i) => (
-              <span className="source-tag" key={i}>{s.category}: {s.title}</span>
-            ))}
-          </div>
-        )}
-        <div className="msg-time">
-          {msg.mode && (
-            <span className={`mode-badge ${msg.mode}`}>
-              {msg.mode === 'online' ? '🌐 AI' : '📴 KB'}
-            </span>
+    <>
+      <motion.div
+        className={`msg ${msg.role}`}
+        initial={{ opacity: 0, y: 16, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <div className="msg-avatar">{isBot ? '🌾' : '👤'}</div>
+        <div className="msg-bubble">
+          {/* Render uploaded image if present */}
+          {msg.image && (
+            <div className="msg-image-container" onClick={() => setIsZoomed(true)}>
+              <img src={msg.image} alt="User upload" className="msg-uploaded-image" />
+            </div>
           )}
-          {' '}{time}
-        </div>
-        {isBot && (
-          <div className="msg-actions">
-            <button className="speak-btn" onClick={handleSpeak} title="🔊">🔊</button>
+
+          <div className="msg-text" dangerouslySetInnerHTML={{ __html: formatText(msg.text) }} />
+          {isBot && msg.sources?.length > 0 && (
+            <div className="msg-sources">
+              📖 {t('source')}:
+              {msg.sources.filter(s => s.title).map((s, i) => (
+                <span className="source-tag" key={i}>{s.category}: {s.title}</span>
+              ))}
+            </div>
+          )}
+          <div className="msg-time">
+            {msg.mode && (
+              <span className={`mode-badge ${msg.mode}`}>
+                {msg.mode === 'online' ? '🌐 AI' : '📴 KB'}
+              </span>
+            )}
+            {' '}{time}
           </div>
+          {isBot && (
+            <div className="msg-actions">
+              <button className="speak-btn" onClick={handleSpeak} title="🔊">🔊</button>
+            </div>
+          )}
+        </div>
+      </motion.div>
+
+      {/* Fullscreen Lightbox Overlay */}
+      <AnimatePresence>
+        {isZoomed && msg.image && (
+          <motion.div
+            className="image-lightbox-overlay"
+            onClick={() => setIsZoomed(false)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="image-lightbox-content" onClick={(e) => e.stopPropagation()}>
+              <img src={msg.image} alt="Zoomed View" />
+              <button className="close-lightbox-btn" onClick={() => setIsZoomed(false)}>
+                &times;
+              </button>
+            </div>
+          </motion.div>
         )}
-      </div>
-    </motion.div>
+      </AnimatePresence>
+    </>
   );
 }
 

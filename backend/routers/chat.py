@@ -22,6 +22,7 @@ class QueryRequest(BaseModel):
     language: str = Field(DEFAULT_LANGUAGE, description="Response language")
     mode: str = Field("offline", description="'online' for Gemini AI, 'offline' for knowledge base")
     history: Optional[List[dict]] = Field(None, description="Chat history for online mode context")
+    image: Optional[str] = Field(None, description="Base64 encoded image string (data:image/...;base64,...)")
 
 
 class QueryResponse(BaseModel):
@@ -84,7 +85,8 @@ async def process_query(request: QueryRequest):
             response_text = await online_ai.chat(
                 query=request.query,
                 language=lang,
-                history=request.history
+                history=request.history,
+                image=request.image
             )
             return QueryResponse(
                 response=response_text,
@@ -151,7 +153,7 @@ async def get_online_status():
     return {
         "configured": configured,
         "available": available,
-        "provider": "DeepSeek v3.2" if configured else "Not configured",
+        "provider": f"OpenRouter ({online_ai.model_name.split('/')[-1]})" if configured else "Not configured",
         "hint": "Set OPENROUTER_API_KEY in .env file" if not configured else "Ready"
     }
 

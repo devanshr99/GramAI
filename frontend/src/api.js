@@ -5,10 +5,15 @@ import { fallbackSearch } from './offlineDB.js';
 const API_BASE = import.meta.env.VITE_API_URL || 'https://gramai-0n2o.onrender.com';
 
 export const api = {
-  async query(query, category, useLLM, language, mode = 'offline', history = null) {
+  async query(query, category, useLLM, language, mode = 'offline', history = null, image = null) {
     const body = { query, category, use_llm: useLLM, language, mode };
-    if (mode === 'online' && history) {
-      body.history = history.slice(-6).map(m => ({ role: m.role, text: m.text }));
+    if (mode === 'online') {
+      if (history) {
+        body.history = history.slice(-6).map(m => ({ role: m.role, text: m.text }));
+      }
+      if (image) {
+        body.image = image;
+      }
     }
     
     try {

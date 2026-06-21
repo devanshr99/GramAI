@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Mic, MicOff, Send } from 'lucide-react';
+import { Mic, MicOff, Send, Image as ImageIcon, X } from 'lucide-react';
 import { TTS_CODES } from '../i18n/translations';
 
 const QUICK_ACTIONS = [
@@ -19,12 +19,55 @@ function getSpeechRecognition() {
   return new SR();
 }
 
-export default function InputArea({ t, onSend, processing, showToast, lang }) {
+// Client-side image compression & resizing utility
+const compressImage = (file, maxWidth = 1024, maxHeight = 1024, quality = 0.7) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new window.Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Convert canvas image to base64 JPEG with specified quality
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl);
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
+
+export default function InputArea({ t, onSend, processing, showToast, lang, mode }) {
   const [text, setText] = useState('');
   const [listening, setListening] = useState(false);
   const [interimText, setInterimText] = useState('');
+  const [selectedImage, setSelectedImage] = useState(null);
+  
   const recognitionRef = useRef(null);
   const textareaRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   // Cleanup recognition on unmount
   useEffect(() => {
@@ -36,9 +79,15 @@ export default function InputArea({ t, onSend, processing, showToast, lang }) {
   }, []);
 
   const handleSend = () => {
-    if (!text.trim() || processing) return;
-    onSend(text.trim());
+    if ((!text.trim() && !selectedImage) || processing) return;
+    
+    // If user uploaded an image but provided no text query, send a default prompt
+    const finalQuery = text.trim() || (lang === 'hi' ? 'इस चित्र का विश्लेषण करें' : 'Analyze this image');
+    
+    onSend(finalQuery, selectedImage);
+    
     setText('');
+    setSelectedImage(null);
     setInterimText('');
     if (textareaRef.current) textareaRef.current.style.height = 'auto';
   };
@@ -54,6 +103,40 @@ export default function InputArea({ t, onSend, processing, showToast, lang }) {
     setText(e.target.value);
     e.target.style.height = 'auto';
     e.target.style.height = Math.min(e.target.scrollHeight, 100) + 'px';
+  };
+
+  const handleImageClick = () => {
+    if (mode !== 'online') {
+      showToast(lang === 'hi' 
+        ? '⚠️ फोटो अपलोड केवल ऑनलाइन AI मोड में समर्थित है। कृपया ऑनलाइन मोड चालू करें।' 
+        : '⚠️ Photo upload is only supported in Online AI Mode. Switch mode to upload.'
+      );
+      return;
+    }
+    fileInputRef.current?.click();
+  };
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      showToast(lang === 'hi' ? '⚠️ कृपया एक चित्र फ़ाइल चुनें' : '⚠️ Please select an image file');
+      return;
+    }
+
+    try {
+      showToast(lang === 'hi' ? '⏳ चित्र को अनुकूलित किया जा रहा है...' : '⏳ Optimizing image...');
+      const compressed = await compressImage(file);
+      setSelectedImage(compressed);
+      showToast(lang === 'hi' ? '✅ चित्र सफलतापूर्वक अपलोड हुआ' : '✅ Image loaded successfully');
+    } catch (err) {
+      console.error(err);
+      showToast(lang === 'hi' ? '⚠️ चित्र लोड करने में विफल' : '⚠️ Failed to load image');
+    }
+    
+    // Clear input value so same file can be reselected if deleted
+    e.target.value = '';
   };
 
   const startListening = useCallback(() => {
@@ -93,8 +176,9 @@ export default function InputArea({ t, onSend, processing, showToast, lang }) {
         setText('');
         setInterimText('');
         setListening(false);
-        // Send directly
-        onSend(final.trim());
+        // Send directly (with selected image if any)
+        onSend(final.trim(), selectedImage);
+        setSelectedImage(null);
       } else if (interim) {
         setInterimText(interim);
       }
@@ -134,7 +218,7 @@ export default function InputArea({ t, onSend, processing, showToast, lang }) {
       showToast(`⚠️ ${t('micUnavailable')}`);
       setListening(false);
     }
-  }, [lang, t, showToast, onSend, interimText]);
+  }, [lang, t, showToast, onSend, interimText, selectedImage]);
 
   const stopListening = useCallback(() => {
     if (recognitionRef.current) {
@@ -145,7 +229,48 @@ export default function InputArea({ t, onSend, processing, showToast, lang }) {
 
   return (
     <footer className="input-area">
+      {/* Hidden File Input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleImageChange}
+        accept="image/*"
+        style={{ display: 'none' }}
+      />
+
+      {/* Selected Image Preview Container */}
+      {selectedImage && (
+        <div className="image-preview-wrapper">
+          <div className="image-preview-card">
+            <img src={selectedImage} alt="Selected preview" />
+            <button className="remove-image-btn" onClick={() => setSelectedImage(null)} title="Remove photo">
+              <X size={14} />
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="input-row">
+        {/* Attachment Button */}
+        <motion.button
+          className={`icon-btn attach-btn ${mode !== 'online' ? 'offline' : ''}`}
+          onClick={handleImageClick}
+          whileTap={{ scale: 0.9 }}
+          title={mode === 'online' ? 'Attach photo' : 'Photo upload (Online only)'}
+          type="button"
+          style={{
+            marginRight: '4px',
+            background: 'none',
+            border: 'none',
+            color: mode === 'online' ? 'var(--primary-light)' : 'var(--text-muted)',
+            boxShadow: 'none',
+            width: '32px',
+            height: '32px'
+          }}
+        >
+          <ImageIcon size={20} />
+        </motion.button>
+
         <textarea
           ref={textareaRef}
           value={listening ? (interimText || text) : text}
@@ -167,7 +292,7 @@ export default function InputArea({ t, onSend, processing, showToast, lang }) {
         <motion.button
           className="icon-btn send-btn"
           onClick={handleSend}
-          disabled={(!text.trim() && !interimText) || processing}
+          disabled={(!text.trim() && !selectedImage && !interimText) || processing}
           whileTap={{ scale: 0.9 }}
           title="Send message"
         >
