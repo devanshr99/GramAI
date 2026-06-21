@@ -2,7 +2,9 @@
 
 ## 🌾 Offline AI Assistant for Rural India | ग्रामीण भारत के लिए ऑफ़लाइन AI सहायक
 
-GramAI is a fully offline AI-powered assistant designed for rural India. It provides voice-based interaction in Hindi, offering knowledge about agriculture, health, education, and government schemes — all without requiring internet connectivity.
+GramAI is an intelligent, voice-enabled assistant designed for rural India. It operates fully offline, providing voice and text interaction in Hindi and other regional languages. It delivers accurate guidance on agriculture, health, education, and government schemes.
+
+If internet is available, GramAI optionally enhances its analysis with online real-time data and supports multimodal photo uploads (e.g. upload a leaf picture to analyze a crop disease). If offline, it runs entirely on-device using a local GGUF Large Language Model and a local semantic search engine.
 
 ---
 
@@ -23,12 +25,12 @@ GramAI is a fully offline AI-powered assistant designed for rural India. It prov
 │                GramAI Server                         │
 │                                                      │
 │  ┌──────────┐  ┌──────────┐  ┌──────────────────┐  │
-│  │ Frontend  │  │ FastAPI  │  │ Ollama LLM       │  │
-│  │ HTML/JS   │──│ Backend  │──│ (Mistral/Llama3) │  │
+│  │ Frontend  │  │ FastAPI  │  │ Local GGUF LLM   │  │
+│  │ HTML/JS   │──│ Backend  │──│ (Phi-3 Mini)     │  │
 │  └──────────┘  └────┬─────┘  └──────────────────┘  │
 │                     │                                │
 │  ┌──────────┐  ┌────▼─────┐  ┌──────────────────┐  │
-│  │ Vosk STT │  │ RAG      │  │ ChromaDB         │  │
+│  │ Vosk STT │  │ RAG      │  │ FAISS Index      │  │
 │  │ (Hindi)  │  │ Pipeline │──│ Vector Store     │  │
 │  └──────────┘  └──────────┘  └──────────────────┘  │
 │                                                      │
@@ -39,18 +41,19 @@ GramAI is a fully offline AI-powered assistant designed for rural India. It prov
 └─────────────────────────────────────────────────────┘
 ```
 
-## ✨ Features
+## ✨ Upgraded Features
 
-- 🎤 **Voice Input** — Speak in Hindi, get answers
-- 🔊 **Voice Output** — Listen to responses
-- 🌾 **Agriculture** — Crop advice, fertilizers, irrigation
-- 🏥 **Health** — First aid, vaccination, nutrition
-- 📚 **Education** — Scholarships, skills, digital literacy
-- 🏛️ **Government Schemes** — PM-KISAN, Ayushman Bharat, MGNREGA
-- 📱 **Mobile-Friendly** — Works on any phone's browser
-- 🔌 **Fully Offline** — No internet needed after setup
-- 🤖 **AI-Powered** — Uses local LLM via Ollama
-- 📡 **WiFi Hotspot** — Creates local network for village access
+- 🎤 **Voice Input** — Speak in Hindi, get transcribed answers instantly.
+- 🔊 **Voice Output** — Tap to read any response aloud.
+- 📷 **Photo Analysis (Online Mode)** — Upload crop, soil, or object photos to ask questions and get visual analyses (like ChatGPT).
+- 🧠 **Intelligent Offline RAG** — Powered by:
+  - **Local LLM**: runs `Phi-3 Mini` (GGUF 4-bit) on CPU using `transformers` (no native C++ compilation required).
+  - **Vector Database**: Semantic search with `FAISS` and `Sentence-Transformers (all-MiniLM-L6-v2)`.
+  - **Query Expansion**: Enriches searches with translation equivalents and synonyms.
+  - **Intent Detection**: Classifies requests into greetings, weather queries, or knowledge database lookups.
+  - **Conversation Memory**: Feeds previous message history context into prompt generators.
+- ⛅ **Real-Time Enhancements** — Blends live weather feeds (Open-Meteo cache) with agricultural knowledge when internet is active.
+- 🔌 **Fully Offline** — Requires zero external connections after the initial model cache setup.
 
 ---
 
@@ -58,9 +61,8 @@ GramAI is a fully offline AI-powered assistant designed for rural India. It prov
 
 ### Prerequisites
 
-- **Python 3.10+**
-- **Ollama** — [Download here](https://ollama.ai)
-- **8GB+ RAM** recommended
+- **Python 3.10 to 3.14**
+- **8GB+ RAM** recommended (for comfortable CPU generation)
 
 ### 1. Clone & Setup
 
@@ -72,49 +74,37 @@ cd GramAI
 # Create virtual environment
 python -m venv venv
 
-# Activate (Linux/Mac)
-source venv/bin/activate
 # Activate (Windows)
 venv\Scripts\activate
+# Activate (Linux/Mac)
+source venv/bin/activate
 
 # Install dependencies
 pip install -r backend/requirements.txt
 ```
 
-### 2. Setup Ollama
+### 2. Download Vosk Hindi Model
 
-```bash
-# Install Ollama (Linux)
-curl -fsSL https://ollama.ai/install.sh | sh
-
-# Pull a model
-ollama pull mistral
-# OR for smaller devices:
-ollama pull phi
-
-# Start Ollama server
-ollama serve
-```
-
-### 3. (Optional) Download Vosk Hindi Model
-
-For voice input support:
+For local voice input (STT) support:
 
 ```bash
 cd backend/models
+# Download small Hindi model
 wget https://alphacephei.com/vosk/models/vosk-model-small-hi-0.22.zip
 unzip vosk-model-small-hi-0.22.zip
 mv vosk-model-small-hi-0.22 vosk-model-hi
 ```
 
-### 4. Start GramAI
+### 3. Start GramAI
 
 ```bash
 cd backend
 python main.py
 ```
 
-Open in browser: **http://localhost:8000** 🎉
+*On the first run, GramAI will automatically generate vector embeddings for the knowledge base files and download the `Phi-3 Mini GGUF` weights from the Hugging Face Hub, caching them in `backend/models`.*
+
+Open your browser: **http://localhost:8000** 🎉
 
 ---
 
@@ -125,33 +115,14 @@ Open in browser: **http://localhost:8000** 🎉
 ```bash
 cd deployment
 sudo chmod +x setup.sh hotspot-setup.sh
-sudo ./setup.sh          # Install everything
-sudo ./hotspot-setup.sh  # Create WiFi hotspot
+sudo ./setup.sh          # Install all system requirements
+sudo ./hotspot-setup.sh  # Configure Pi as local WiFi access point
 ```
 
 After setup, villagers can:
-1. Connect to **"GramAI-WiFi"** network (password: `gramai1234`)
-2. Open browser → **http://192.168.4.1:8000**
-3. Start asking questions! 🎤
-
-### Hardware Requirements
-
-| Component | Minimum | Recommended |
-|-----------|---------|-------------|
-| Device | Raspberry Pi 4 (4GB) | RPi 4 (8GB) / Mini PC |
-| Storage | 16GB SD Card | 64GB SD Card |
-| Power | 5V 3A | 5V 3A USB-C |
-
----
-
-## 🐳 Docker Deployment
-
-```bash
-cd deployment
-docker-compose up -d
-```
-
-> **Note:** Ollama must be running on the host machine. The Docker container connects to it via `host.docker.internal`.
+1. Connect to the **"GramAI-WiFi"** network (password: `gramai1234`).
+2. Open browser and type → **http://192.168.4.1:8000**
+3. Tap the microphone and start asking questions! 🎤
 
 ---
 
@@ -160,37 +131,24 @@ docker-compose up -d
 ```
 GRAMAI/
 ├── backend/
-│   ├── main.py              # FastAPI application
-│   ├── config.py             # Configuration
-│   ├── routers/              # API endpoints
-│   │   ├── chat.py           # Chat & RAG queries
-│   │   ├── voice.py          # STT/TTS endpoints
-│   │   └── health.py         # Health checks
-│   ├── services/             # Core services
-│   │   ├── llm_service.py    # Ollama integration
-│   │   ├── rag_service.py    # RAG pipeline
-│   │   ├── stt_service.py    # Speech-to-Text
-│   │   ├── tts_service.py    # Text-to-Speech
-│   │   └── vector_store.py   # ChromaDB
-│   └── data/                 # Knowledge base (Hindi)
-│       ├── agriculture.json
-│       ├── education.json
-│       ├── health.json
-│       └── schemes.json
+│   ├── main.py              # FastAPI application & startup pipeline
+│   ├── config.py            # Local GGUF & embedding configurations
+│   ├── routers/             # API endpoints (chat, voice, health, weather)
+│   ├── services/            # Core business services
+│   │   ├── llm_service.py   # Local Phi-3 GGUF & Online API routing
+│   │   ├── rag_service.py   # Upgraded memory, expansion & intent RAG
+│   │   ├── stt_service.py   # Speech-to-Text (Vosk)
+│   │   ├── tts_service.py   # Text-to-Speech (pyttsx3)
+│   │   └── vector_store.py  # FAISS Vector database + semantic embedder
+│   └── data/                # Knowledge base documents and FAISS indices
 ├── frontend/
-│   ├── index.html            # Mobile-first UI
-│   ├── css/style.css         # Premium dark theme
-│   └── js/app.js             # Chat & voice logic
-├── deployment/
-│   ├── Dockerfile
-│   ├── docker-compose.yml
-│   ├── setup.sh              # Linux/RPi setup
-│   ├── setup.bat             # Windows setup
-│   └── hotspot-setup.sh      # WiFi AP config
-├── tests/
-│   ├── test_chat.py
-│   ├── test_voice.py
-│   └── test_rag.py
+│   ├── index.html           # SPA entry point
+│   ├── src/                 # React & Vite sources
+│   │   ├── components/      # ChatArea, InputArea, Weather cards
+│   │   ├── i18n/            # Multi-language translation packs
+│   │   └── index.css        # Premium glassmorphism styles
+│   └── public/              # Assets & offline service worker
+├── deployment/              # Pi deployment & Docker configurations
 └── README.md
 ```
 
@@ -200,54 +158,28 @@ GRAMAI/
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `POST` | `/api/chat/query` | Send a query (RAG + LLM) |
-| `POST` | `/api/chat/search` | Search knowledge base |
-| `GET` | `/api/chat/categories` | List categories |
-| `POST` | `/api/voice/transcribe` | Upload audio for STT |
-| `POST` | `/api/voice/speak` | Generate TTS audio |
-| `GET` | `/api/voice/status` | Voice service status |
-| `GET` | `/api/health` | Health check |
-| `GET` | `/api/status` | Detailed system status |
-
-### Example Query
-
-```bash
-curl -X POST http://localhost:8000/api/chat/query \
-  -H "Content-Type: application/json" \
-  -d '{"query": "गेहूं की खेती कैसे करें?", "category": "कृषि"}'
-```
-
----
-
-## 🧪 Testing
-
-```bash
-pip install pytest
-cd tests
-pytest -v
-```
-
----
-
-## 🌐 Demo Usage
-
-1. **Text Query**: Type "PM-KISAN योजना क्या है?" → Get detailed answer
-2. **Voice Query**: Click 🎤 → Speak in Hindi → Auto-transcribed & answered
-3. **Category Filter**: Tap a category card to filter by topic
-4. **Quick Actions**: Tap preset questions for instant answers
-5. **Listen**: Click 🔊 on any response to hear it read aloud
+| `POST` | `/api/chat/query` | Submit query (base64 image optional, handles local GGUF / RAG / online APIs) |
+| `POST` | `/api/chat/search` | Raw FAISS semantic search |
+| `GET` | `/api/chat/categories` | Get active document categories |
+| `POST` | `/api/voice/transcribe` | Upload voice recording for transcription |
+| `POST` | `/api/voice/speak` | Synthesize TTS speech audio |
+| `GET` | `/api/chat/online-status` | Report if online AI key is configured |
+| `GET` | `/api/health` | Service checks |
 
 ---
 
 ## ⚙️ Configuration
 
-Copy `.env.example` to `.env` and customize:
+Create a `.env` file in the `backend/` directory to customize configurations:
 
 ```bash
-# LLM Model (choose based on hardware)
-OLLAMA_MODEL=mistral       # 7B, good quality, needs 8GB RAM
-# OLLAMA_MODEL=phi          # 2.7B, lighter, needs 4GB RAM
-# OLLAMA_MODEL=llama3       # 8B, best quality, needs 8GB RAM
+# Online AI key (Optional: triggers Gemini/Claude enhancements and photo uploads)
+OPENROUTER_API_KEY=sk-or-v1-xxxxx
+ANTHROPIC_API_KEY=sk-ant-xxxxx
+
+# Local GGUF Settings
+LOCAL_LLM_REPO=microsoft/Phi-3-mini-4k-instruct-gguf
+LOCAL_LLM_FILE=Phi-3-mini-4k-instruct-q4.gguf
 
 # Server
 HOST=0.0.0.0
@@ -258,42 +190,23 @@ PORT=8000
 
 ## 📋 Knowledge Base
 
-| Category | Items | Topics |
-|----------|-------|--------|
-| 🌾 कृषि (Agriculture) | 10 | Crops, fertilizers, irrigation, pests, organic farming |
-| 📚 शिक्षा (Education) | 7 | Schools, scholarships, skills, digital literacy |
-| 🏥 स्वास्थ्य (Health) | 8 | First aid, vaccination, nutrition, schemes |
-| 🏛️ सरकारी योजना (Schemes) | 10 | PM-KISAN, Ayushman, PMAY, MGNREGA, Jan Dhan |
-
-**Total: 35+ knowledge articles** covering essential rural needs.
+| Category | Topics Covered |
+|----------|----------------|
+| 🌾 कृषि (Agriculture) | Crops (wheat/paddy/rice), organic manures, urea, drip irrigation, pest treatments. |
+| 📚 शिक्षा (Education) | Schools, scholarships (PM-Scholarship), skill development, vocational courses. |
+| 🏥 स्वास्थ्य (Health) | First aid, fever treatment, malaria, dengue, pregnancy guidance, nutrition. |
+| 🏛️ सरकारी योजना (Schemes) | PM-KISAN, Ayushman Bharat health card, PMAY, MGNREGA, pension programs. |
 
 ---
 
 ## 🤝 Contributing
 
-To add new knowledge:
-1. Add entries to the appropriate JSON file in `backend/data/`
-2. Follow the existing format (id, category, title, content, keywords)
-3. Restart the server — data auto-loads into vector store
-
----
-
-## 📄 License
-
-MIT License — Free to use for rural development and social impact projects.
-
----
-
-## 🙏 Acknowledgments
-
-- **Ollama** — Local LLM inference
-- **ChromaDB** — Vector storage
-- **Vosk** — Offline speech recognition
-- **FastAPI** — High-performance Python API
+To add new documents:
+1. Append JSON objects to the data files in `backend/data/`.
+2. Delete the `backend/data/faiss_index` folder.
+3. Restart the server. The FAISS database will automatically rebuild the index with the new entries!
 
 ---
 
 > **🌾 Built with ❤️ for the farmers, students, and families of rural India.**
 > **ग्रामीण भारत के किसानों, छात्रों और परिवारों के लिए ❤️ से बनाया गया।**
-
-<!-- redeploy trigger -->
