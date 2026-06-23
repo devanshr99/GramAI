@@ -1,0 +1,130 @@
+{
+  "यूरिया": {
+    "en": ["urea"],
+    "hi": ["यूरिया"],
+    "composition": "46% N",
+    "type": "chemical",
+    "aliases": ["urea", "yuriya"],
+    "usage": "nitrogen_top_dress"
+  },
+  "DAP": {
+    "en": ["DAP", "diammonium phosphate"],
+    "hi": ["डीएपी"],
+    "composition": "18% N, 46% P",
+    "type": "chemical",
+    "aliases": ["dap", "di ammonium phosphate"],
+    "usage": "basal_phosphorus"
+  },
+  "MOP": {
+    "en": ["MOP", "muriate of potash", "potassium chloride"],
+    "hi": ["एमओपी", "पोटाश"],
+    "composition": "60% K",
+    "type": "chemical",
+    "aliases": ["mop", "potash"],
+    "usage": "basal_potassium"
+  },
+  "NPK": {
+    "en": ["NPK", "complex fertilizer"],
+    "hi": ["एनपीके", "मिश्रित उर्वरक"],
+    "composition": "various ratios",
+    "type": "chemical",
+    "aliases": ["npk", "complex"],
+    "usage": "balanced_nutrition"
+  },
+  "SSP": {
+    "en": ["SSP", "single super phosphate"],
+    "hi": ["सिंगल सुपर फॉस्फेट"],
+    "composition": "16% P, 11% S",
+    "type": "chemical",
+    "aliases": ["ssp", "super phosphate"],
+    "usage": "phosphorus_sulphur"
+  },
+  "जिंक सल्फेट": {
+    "en": ["zinc sulphate", "zinc sulfate"],
+    "hi": ["जिंक सल्फेट", "जस्ता"],
+    "composition": "21-33% Zn",
+    "type": "micronutrient",
+    "aliases": ["zinc", "jasta"],
+    "usage": "zinc_deficiency"
+  },
+  "बोरॉन": {
+    "en": ["borax", "boron"],
+    "hi": ["बोरॉन", "बोरेक्स"],
+    "composition": "11% B",
+    "type": "micronutrient",
+    "aliases": ["boron", "borax"],
+    "usage": "boron_deficiency"
+  },
+  "गोबर खाद": {
+    "en": ["farmyard manure", "FYM", "cow dung manure"],
+    "hi": ["गोबर खाद", "देसी खाद"],
+    "composition": "0.5% N, 0.2% P, 0.5% K",
+    "type": "organic",
+    "aliases": ["gobar khad", "desi khad", "fym"],
+    "usage": "organic_base"
+  },
+  "वर्मीकम्पोस्ट": {
+    "en": ["vermicompost", "worm compost"],
+    "hi": ["वर्मीकम्पोस्ट", "केंचुआ खाद"],
+    "composition": "1.5% N, 0.5% P, 0.8% K",
+    "type": "organic",
+    "aliases": ["vermicompost", "kenchua khad"],
+    "usage": "organic_rich"
+  },
+  "जीवामृत": {
+    "en": ["jeevamrit", "jeevamrut"],
+    "hi": ["जीवामृत"],
+    "composition": "microbial culture",
+    "type": "organic",
+    "aliases": ["jeevamrit", "jeevamrut"],
+    "usage": "soil_biology"
+  },
+  "हरी खाद": {
+    "en": ["green manure"],
+    "hi": ["हरी खाद"],
+    "composition": "varies",
+    "type": "organic",
+    "aliases": ["hari khad", "green manure"],
+    "usage": "nitrogen_fixation"
+  },
+  "नीम खली": {
+    "en": ["neem cake", "neem oil cake"],
+    "hi": ["नीम खली", "नीम की खली"],
+    "composition": "5% N + pest repellent",
+    "type": "organic",
+    "aliases": ["neem khali", "neem cake"],
+    "usage": "organic_pest_control"
+  },
+  "ट्राइकोडर्मा": {
+    "en": ["trichoderma"],
+    "hi": ["ट्राइकोडर्मा"],
+    "composition": "biological fungicide",
+    "type": "biological",
+    "aliases": ["trichoderma"],
+    "usage": "soil_fungicide"
+  },
+  "राइजोबियम": {
+    "en": ["rhizobium"],
+    "hi": ["राइजोबियम"],
+    "composition": "nitrogen fixing bacteria",
+    "type": "biological",
+    "aliases": ["rhizobium"],
+    "usage": "pulse_inoculant"
+  },
+  "पीएसबी": {
+    "en": ["PSB", "phosphate solubilizing bacteria"],
+    "hi": ["पीएसबी", "फॉस्फेट घोलक जीवाणु"],
+    "composition": "phosphorus mobilizer",
+    "type": "biological",
+    "aliases": ["psb", "phosphate bacteria"],
+    "usage": "phosphorus_availability"
+  },
+  "नीम तेल": {
+    "en": ["neem oil"],
+    "hi": ["नीम तेल", "नीम का तेल"],
+    "composition": "azadirachtin",
+    "type": "biopesticide",
+    "aliases": ["neem tel", "neem oil"],
+    "usage": "organic_pesticide"
+  }
+}

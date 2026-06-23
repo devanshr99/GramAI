@@ -1,0 +1,166 @@
+{
+  "झुलसा": {
+    "en": ["blight", "late blight", "early blight"],
+    "hi": ["अंगमारी", "झुलसा रोग"],
+    "affects": ["आलू", "टमाटर", "धान"],
+    "type": "plant",
+    "aliases": ["jhulsa", "angmari"]
+  },
+  "गेरुआ": {
+    "en": ["rust", "wheat rust", "leaf rust"],
+    "hi": ["गेरुई", "गेरुआ रोग"],
+    "affects": ["गेहूं", "जौ"],
+    "type": "plant",
+    "aliases": ["gerua", "gerui"]
+  },
+  "कंडुआ": {
+    "en": ["smut", "loose smut", "covered smut"],
+    "hi": ["कंडुआ रोग"],
+    "affects": ["गेहूं", "बाजरा", "ज्वार"],
+    "type": "plant",
+    "aliases": ["kandua"]
+  },
+  "उकठा": {
+    "en": ["wilt", "fusarium wilt"],
+    "hi": ["उकठा रोग", "मुरझान"],
+    "affects": ["अरहर", "चना", "टमाटर"],
+    "type": "plant",
+    "aliases": ["uktha", "murjhan"]
+  },
+  "चूर्णिल आसिता": {
+    "en": ["powdery mildew"],
+    "hi": ["चूर्णिल फफूंदी", "सफेद चूर्ण"],
+    "affects": ["मटर", "गेहूं", "सरसों"],
+    "type": "plant",
+    "aliases": ["powdery mildew", "safed churna"]
+  },
+  "मृदुरोमिल आसिता": {
+    "en": ["downy mildew"],
+    "hi": ["मृदुरोमिल फफूंदी"],
+    "affects": ["बाजरा", "मक्का", "प्याज"],
+    "type": "plant",
+    "aliases": ["downy mildew"]
+  },
+  "तना छेदक": {
+    "en": ["stem borer"],
+    "hi": ["तना छेदक कीट"],
+    "affects": ["धान", "गन्ना", "मक्का"],
+    "type": "plant_pest",
+    "aliases": ["tana chhedak", "stem borer"]
+  },
+  "फल छेदक": {
+    "en": ["fruit borer", "shoot borer"],
+    "hi": ["फल छेदक कीट", "शूट बोरर"],
+    "affects": ["टमाटर", "बैंगन", "भिंडी"],
+    "type": "plant_pest",
+    "aliases": ["fal chhedak"]
+  },
+  "सफेद मक्खी": {
+    "en": ["whitefly"],
+    "hi": ["सफेद मक्खी"],
+    "affects": ["कपास", "टमाटर", "मिर्च"],
+    "type": "plant_pest",
+    "aliases": ["safed makhi", "whitefly"]
+  },
+  "माहू": {
+    "en": ["aphid", "aphids"],
+    "hi": ["माहू", "चेपा", "मोयला"],
+    "affects": ["सरसों", "गेहूं", "आलू"],
+    "type": "plant_pest",
+    "aliases": ["mahu", "chepa"]
+  },
+  "दीमक": {
+    "en": ["termite", "termites"],
+    "hi": ["दीमक"],
+    "affects": ["गन्ना", "गेहूं", "all"],
+    "type": "plant_pest",
+    "aliases": ["deemak"]
+  },
+  "खरपतवार": {
+    "en": ["weed", "weeds"],
+    "hi": ["खरपतवार", "जंगली घास"],
+    "affects": ["all"],
+    "type": "plant_weed",
+    "aliases": ["kharpatwar"]
+  },
+  "पत्ती धब्बा": {
+    "en": ["leaf spot", "leaf blight"],
+    "hi": ["पत्ती धब्बा रोग"],
+    "affects": ["धान", "मूंगफली", "सोयाबीन"],
+    "type": "plant",
+    "aliases": ["patti dhabba", "leaf spot"]
+  },
+  "जड़ गलन": {
+    "en": ["root rot"],
+    "hi": ["जड़ गलन रोग", "जड़ सड़न"],
+    "affects": ["चना", "मूंग", "सोयाबीन"],
+    "type": "plant",
+    "aliases": ["jad galan", "root rot"]
+  },
+  "बुखार": {
+    "en": ["fever", "pyrexia"],
+    "hi": ["ताप", "ज्वर", "बुखार"],
+    "type": "human",
+    "aliases": ["bukhar", "taap", "jwar"]
+  },
+  "मलेरिया": {
+    "en": ["malaria"],
+    "hi": ["मलेरिया", "मौसमी बुखार"],
+    "type": "human",
+    "aliases": ["malaria", "mausami bukhar"]
+  },
+  "डेंगू": {
+    "en": ["dengue", "dengue fever"],
+    "hi": ["डेंगू", "डेंगी"],
+    "type": "human",
+    "aliases": ["dengue", "dengi"]
+  },
+  "टाइफाइड": {
+    "en": ["typhoid", "typhoid fever"],
+    "hi": ["टाइफाइड", "मियादी बुखार", "मोतीझरा"],
+    "type": "human",
+    "aliases": ["typhoid", "miyadi bukhar"]
+  },
+  "दस्त": {
+    "en": ["diarrhea", "diarrhoea", "loose motion"],
+    "hi": ["दस्त", "पतले दस्त", "अतिसार"],
+    "type": "human",
+    "aliases": ["dast", "atisar"]
+  },
+  "हैजा": {
+    "en": ["cholera"],
+    "hi": ["हैजा", "विसूचिका"],
+    "type": "human",
+    "aliases": ["haija", "cholera"]
+  },
+  "पीलिया": {
+    "en": ["jaundice"],
+    "hi": ["पीलिया", "कामला"],
+    "type": "human",
+    "aliases": ["piliya", "kamla"]
+  },
+  "खसरा": {
+    "en": ["measles"],
+    "hi": ["खसरा", "मीज़ल्स"],
+    "type": "human",
+    "aliases": ["khasra", "measles"]
+  },
+  "चिकनपॉक्स": {
+    "en": ["chickenpox", "chicken pox"],
+    "hi": ["चिकनपॉक्स", "छोटी माता", "चेचक"],
+    "type": "human",
+    "aliases": ["chickenbox", "chhoti mata"]
+  },
+  "कुपोषण": {
+    "en": ["malnutrition", "undernutrition"],
+    "hi": ["कुपोषण", "पोषण की कमी"],
+    "type": "human",
+    "aliases": ["kuposhan"]
+  },
+  "एनीमिया": {
+    "en": ["anemia", "anaemia"],
+    "hi": ["एनीमिया", "खून की कमी", "रक्ताल्पता"],
+    "type": "human",
+    "aliases": ["anemia", "khoon ki kami"]
+  }
+}

@@ -1,0 +1,268 @@
+{
+  "धान": {
+    "en": ["rice", "paddy"],
+    "hi": ["चावल", "धान", "भात"],
+    "aliases": ["खरीफ फसल", "kharif crop", "dhan"],
+    "season": "kharif",
+    "category": "cereal"
+  },
+  "गेहूं": {
+    "en": ["wheat"],
+    "hi": ["कनक", "गेंहू", "गेहूँ"],
+    "aliases": ["रबी फसल", "rabi crop", "gehun"],
+    "season": "rabi",
+    "category": "cereal"
+  },
+  "मक्का": {
+    "en": ["maize", "corn"],
+    "hi": ["भुट्टा", "मकई"],
+    "aliases": ["makka", "makkai"],
+    "season": "kharif",
+    "category": "cereal"
+  },
+  "बाजरा": {
+    "en": ["millet", "pearl millet", "bajra"],
+    "hi": ["बाजरी"],
+    "aliases": ["bajra", "bajri"],
+    "season": "kharif",
+    "category": "millet"
+  },
+  "ज्वार": {
+    "en": ["sorghum", "jowar"],
+    "hi": ["ज्वार"],
+    "aliases": ["jowar", "juar"],
+    "season": "kharif",
+    "category": "millet"
+  },
+  "रागी": {
+    "en": ["finger millet", "ragi"],
+    "hi": ["मंडुआ", "नाचनी"],
+    "aliases": ["nachni", "mandua"],
+    "season": "kharif",
+    "category": "millet"
+  },
+  "जौ": {
+    "en": ["barley"],
+    "hi": ["जौ", "जव"],
+    "aliases": ["jau", "jav"],
+    "season": "rabi",
+    "category": "cereal"
+  },
+  "आलू": {
+    "en": ["potato"],
+    "hi": ["आलू", "बटाटा"],
+    "aliases": ["aloo", "batata"],
+    "season": "rabi",
+    "category": "vegetable"
+  },
+  "टमाटर": {
+    "en": ["tomato"],
+    "hi": ["टमाटर", "तमाटर"],
+    "aliases": ["tamatar"],
+    "season": "all",
+    "category": "vegetable"
+  },
+  "प्याज": {
+    "en": ["onion"],
+    "hi": ["प्याज", "कांदा"],
+    "aliases": ["pyaz", "pyaaz", "kanda"],
+    "season": "rabi",
+    "category": "vegetable"
+  },
+  "लहसुन": {
+    "en": ["garlic"],
+    "hi": ["लहसुन", "लसुन"],
+    "aliases": ["lahsun"],
+    "season": "rabi",
+    "category": "vegetable"
+  },
+  "मिर्च": {
+    "en": ["chilli", "chili", "pepper"],
+    "hi": ["मिर्च", "मिर्ची", "हरी मिर्च"],
+    "aliases": ["mirch", "mirchi"],
+    "season": "kharif",
+    "category": "spice"
+  },
+  "हल्दी": {
+    "en": ["turmeric"],
+    "hi": ["हल्दी", "हरिद्रा"],
+    "aliases": ["haldi"],
+    "season": "kharif",
+    "category": "spice"
+  },
+  "अदरक": {
+    "en": ["ginger"],
+    "hi": ["अदरक", "अदरख", "सोंठ"],
+    "aliases": ["adrak"],
+    "season": "kharif",
+    "category": "spice"
+  },
+  "गन्ना": {
+    "en": ["sugarcane"],
+    "hi": ["गन्ना", "ईख"],
+    "aliases": ["ganna", "eekh"],
+    "season": "all",
+    "category": "cash_crop"
+  },
+  "कपास": {
+    "en": ["cotton"],
+    "hi": ["कपास", "रूई"],
+    "aliases": ["kapas", "rui"],
+    "season": "kharif",
+    "category": "cash_crop"
+  },
+  "सरसों": {
+    "en": ["mustard", "rapeseed"],
+    "hi": ["सरसों", "राई"],
+    "aliases": ["sarson", "rai"],
+    "season": "rabi",
+    "category": "oilseed"
+  },
+  "मूंगफली": {
+    "en": ["groundnut", "peanut"],
+    "hi": ["मूंगफली", "मूँगफली"],
+    "aliases": ["moongfali", "moongphali"],
+    "season": "kharif",
+    "category": "oilseed"
+  },
+  "सोयाबीन": {
+    "en": ["soybean", "soya"],
+    "hi": ["सोयाबीन"],
+    "aliases": ["soyabean"],
+    "season": "kharif",
+    "category": "oilseed"
+  },
+  "तिल": {
+    "en": ["sesame"],
+    "hi": ["तिल", "तिली"],
+    "aliases": ["til"],
+    "season": "kharif",
+    "category": "oilseed"
+  },
+  "सूरजमुखी": {
+    "en": ["sunflower"],
+    "hi": ["सूरजमुखी"],
+    "aliases": ["surajmukhi"],
+    "season": "rabi",
+    "category": "oilseed"
+  },
+  "अरहर": {
+    "en": ["pigeon pea", "red gram", "tur dal"],
+    "hi": ["अरहर", "तुअर", "तूर"],
+    "aliases": ["arhar", "toor", "tuar"],
+    "season": "kharif",
+    "category": "pulse"
+  },
+  "चना": {
+    "en": ["chickpea", "gram", "bengal gram"],
+    "hi": ["चना", "छोला"],
+    "aliases": ["chana", "chhola"],
+    "season": "rabi",
+    "category": "pulse"
+  },
+  "मूंग": {
+    "en": ["green gram", "mung bean", "moong"],
+    "hi": ["मूंग", "मूँग"],
+    "aliases": ["moong"],
+    "season": "kharif",
+    "category": "pulse"
+  },
+  "उड़द": {
+    "en": ["black gram", "urad"],
+    "hi": ["उड़द", "उरद"],
+    "aliases": ["urad", "urad dal"],
+    "season": "kharif",
+    "category": "pulse"
+  },
+  "मसूर": {
+    "en": ["lentil", "masoor"],
+    "hi": ["मसूर", "मसूर दाल"],
+    "aliases": ["masoor", "masur"],
+    "season": "rabi",
+    "category": "pulse"
+  },
+  "भिंडी": {
+    "en": ["okra", "lady finger"],
+    "hi": ["भिंडी"],
+    "aliases": ["bhindi", "bhendi"],
+    "season": "kharif",
+    "category": "vegetable"
+  },
+  "बैंगन": {
+    "en": ["eggplant", "brinjal", "aubergine"],
+    "hi": ["बैंगन", "बैगन"],
+    "aliases": ["baingan"],
+    "season": "all",
+    "category": "vegetable"
+  },
+  "पालक": {
+    "en": ["spinach"],
+    "hi": ["पालक"],
+    "aliases": ["palak"],
+    "season": "rabi",
+    "category": "vegetable"
+  },
+  "लौकी": {
+    "en": ["bottle gourd", "calabash"],
+    "hi": ["लौकी", "घिया", "दूधी"],
+    "aliases": ["lauki", "ghiya", "dudhi"],
+    "season": "all",
+    "category": "vegetable"
+  },
+  "करेला": {
+    "en": ["bitter gourd", "bitter melon"],
+    "hi": ["करेला"],
+    "aliases": ["karela"],
+    "season": "kharif",
+    "category": "vegetable"
+  },
+  "कद्दू": {
+    "en": ["pumpkin", "squash"],
+    "hi": ["कद्दू", "काशीफल", "सीताफल"],
+    "aliases": ["kaddu", "kumhda"],
+    "season": "all",
+    "category": "vegetable"
+  },
+  "खीरा": {
+    "en": ["cucumber"],
+    "hi": ["खीरा", "ककड़ी"],
+    "aliases": ["kheera", "kakdi"],
+    "season": "kharif",
+    "category": "vegetable"
+  },
+  "आम": {
+    "en": ["mango"],
+    "hi": ["आम"],
+    "aliases": ["aam"],
+    "season": "summer",
+    "category": "fruit"
+  },
+  "केला": {
+    "en": ["banana"],
+    "hi": ["केला"],
+    "aliases": ["kela"],
+    "season": "all",
+    "category": "fruit"
+  },
+  "अमरूद": {
+    "en": ["guava"],
+    "hi": ["अमरूद"],
+    "aliases": ["amrood", "amrud"],
+    "season": "all",
+    "category": "fruit"
+  },
+  "पपीता": {
+    "en": ["papaya"],
+    "hi": ["पपीता"],
+    "aliases": ["papita"],
+    "season": "all",
+    "category": "fruit"
+  },
+  "जूट": {
+    "en": ["jute"],
+    "hi": ["जूट", "पटसन"],
+    "aliases": ["jute", "patsan"],
+    "season": "kharif",
+    "category": "fiber"
+  }
+}
